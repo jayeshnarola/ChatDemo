@@ -31,7 +31,7 @@ class ChatList extends React.Component {
                     time == 'now' &&
                     <View style={{ flex: 0.12, justifyContent: 'center', alignItems: 'center' }}>
                         <View>
-                            <Text style={{ color: Colors.WHITE }}>now</Text>
+                            <Text style={{ color: Colors.WHITE,color:'#ccc' }}>now</Text>
                         </View>
                         <View style={{ alignSelf: 'flex-end' }}>
                             <View style={{ height: 8, width: 8, borderRadius: 4, marginTop: 8, marginRight: 10, backgroundColor: '#0499ff' }}></View>
@@ -62,7 +62,9 @@ class ChatList extends React.Component {
                     {this.renderChat('Nitesh Gujar', Images.ChatUser3, 'Hey man, how are you?', '16:10')}
                     {this.renderChat('Praful Argiddi', Images.ChatUser4, 'are you there praful?', 'now')}
                     {this.renderChat('Nitin Patel', Images.ChatUser5, 'Hello brother...', '15:22')}
-                    {this.renderChat('Rahul Patil', Images.ChatUser6, 'Hey rahul patil saheba', 'now')}
+                    {this.renderChat('Rahul Patil', Images.ChatUser6, 'Hey rahul patil saheba', '12:25')}
+                    {this.renderChat('Jayesh Patil', Images.ChatUser7, 'today whats your plan for movie', '1:25')}
+                    {this.renderChat('Radhika Patel', Images.ChatUser8, 'Hello dear', '5:25')}
                 </ScrollView>
             </SafeAreaView>
         )

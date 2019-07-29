@@ -14,6 +14,8 @@ const images = {
   ChatUser4: require('../Assets/Images/chatUser4.jpg'),
   ChatUser5: require('../Assets/Images/chatUser5.jpg'),
   ChatUser6: require('../Assets/Images/chatUser6.jpg'),
+  ChatUser7: require('../Assets/Images/chatUser7.jpg'),
+  ChatUser8: require('../Assets/Images/chatUser8.jpeg'),
   Dot: require('../Assets/Images/dot.png'),
 };
 
