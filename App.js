@@ -30,7 +30,7 @@ const App = () => {
   console.disableYellowBox = true
   return (
     <Fragment>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="dark-content" backgroundColor="black" />
       <SafeAreaView style={{flex:1}}>
           <Appnavigation />
       </SafeAreaView>

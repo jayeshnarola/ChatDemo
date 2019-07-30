@@ -25,10 +25,10 @@ class Login extends Component {
                 </View>
                 <View style={{ flex: 0.35, backgroundColor: Colors.MATEBLACK, }}>
                     <View style={{ height: '100%', width: '93%', borderRadius: 25, alignSelf: 'center', backgroundColor: Colors.WHITE, shadowRadius: 15, shadowOffset: { width: 0, height: 0, }, shadowColor: Colors.BLACK, shadowOpacity: 1.0, }}>
-                        <View style={{ width: '90%', flexDirection: 'row', borderBottomWidth: 0.5, borderColor: '#ccc', alignSelf: 'center' }}>
+                        <View style={{ width: '90%', flexDirection: 'row', borderBottomWidth: 0.5, borderColor: Colors.SIMPLEGRAY, alignSelf: 'center' }}>
                             <View style={{ width: '90%' }}>
                                 <FloatingLabel
-                                    labelStyle={{ color: '#aaa', fontSize: 15 }}
+                                    labelStyle={{ color: Colors.LABELSTYLE, fontSize: 15 }}
                                     inputStyle={{ borderWidth: 0 }}
                                     style={{
                                         marginTop: 5,
@@ -43,10 +43,10 @@ class Login extends Component {
                             </View>
                         </View>
 
-                        <View style={{ width: '90%', flexDirection: 'row', borderBottomWidth: 0.5, borderColor: '#ccc', alignSelf: 'center' }}>
+                        <View style={{ width: '90%', flexDirection: 'row', borderBottomWidth: 0.5, borderColor: Colors.SIMPLEGRAY, alignSelf: 'center' }}>
                             <View style={{ width: '90%' }}>
                                 <FloatingLabel
-                                    labelStyle={{ color: '#aaa', fontSize: 15 }}
+                                    labelStyle={{ color: Colors.LABELSTYLE, fontSize: 15 }}
                                     password={true}
                                     inputStyle={{ borderWidth: 0 }}
                                     style={{
@@ -58,7 +58,7 @@ class Login extends Component {
                         </FloatingLabel>
                             </View>
                             <View style={{ width: '10%', alignSelf: 'flex-end', }}>
-                                <Image style={{ height: 20, width: 20, tintColor: 'gray', marginBottom: Matrics.ScaleValue(10) }} source={Images.Eye} />
+                                <Image style={{ height: 20, width: 20, tintColor: Colors.GRAY, marginBottom: Matrics.ScaleValue(10) }} source={Images.Eye} />
                             </View>
                         </View>
 

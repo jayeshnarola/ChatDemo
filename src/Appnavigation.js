@@ -5,6 +5,7 @@ import { Image } from 'react-native';
 import Register from './screens/Register'
 import ChatList from "./screens/ChatList";
 import Profile from "./screens/Profile";
+import ChatRoom from "./screens/ChatRoom";
 import { Images } from "./Config";
 
 const TabNavigator = createBottomTabNavigator({
@@ -59,6 +60,12 @@ const AppNavigator = createStackNavigator({
     },
     Profile: {
         screen: TabNavigator,
+        navigationOptions: {
+            header: null
+        }
+    },
+    ChatRoom: {
+        screen: ChatRoom,
         navigationOptions: {
             header: null
         }

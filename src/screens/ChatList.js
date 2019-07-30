@@ -15,26 +15,26 @@ class ChatList extends React.Component {
     }
     renderChat(name, userImg, msg, time) {
         return (
-            <TouchableOpacity style={{ height: 70, width: '100%', flexDirection: 'row' }}>
+            <TouchableOpacity onPress={()=>{this.props.navigation.navigate('ChatRoom')}} style={{ height: 70, width: '100%', flexDirection: 'row' }}>
                 <View style={{ flex: 0.18, justifyContent: 'center', alignItems: 'center' }}>
                     <Image style={{ height: 40, width: 40, borderRadius: 25 }} source={userImg} />
                 </View>
                 <View style={{ flex: 0.70, justifyContent: 'center' }}>
                     <View>
-                        <Text style={{ fontWeight: '600', fontSize: 15, color: Colors.WHITE }}>{name}</Text>
+                        <Text style={{ fontWeight: 'bold', fontSize: 15, color: Colors.WHITE }}>{name}</Text>
                     </View>
                     <View>
-                        <Text style={{ color: Colors.WHITE, marginTop: 5, color: '#ccc', fontSize: 13 }}>{msg}</Text>
+                        <Text style={{ color: Colors.WHITE, marginTop: 5, color: Colors.SIMPLEGRAY, fontSize: 13 }}>{msg}</Text>
                     </View>
                 </View>
                 {
                     time == 'now' &&
                     <View style={{ flex: 0.12, justifyContent: 'center', alignItems: 'center' }}>
                         <View>
-                            <Text style={{ color: Colors.WHITE,color:'#ccc' }}>now</Text>
+                            <Text style={{ color: Colors.WHITE,color:Colors.SIMPLEGRAY }}>now</Text>
                         </View>
                         <View style={{ alignSelf: 'flex-end' }}>
-                            <View style={{ height: 8, width: 8, borderRadius: 4, marginTop: 8, marginRight: 10, backgroundColor: '#0499ff' }}></View>
+                            <View style={{ height: 8, width: 8, borderRadius: 4, marginTop: 8, marginRight: 10, backgroundColor: Colors.ONLINEDOTCOLOR }}></View>
                         </View>
                     </View>
                 }
@@ -42,7 +42,7 @@ class ChatList extends React.Component {
                     time != 'now' &&
                     <View style={{ flex: 0.12, justifyContent: 'center', alignItems: 'center' }}>
                         <View>
-                            <Text style={{ color: Colors.WHITE, fontSize: 12, marginBottom: 15, marginRight: 8, color: '#ccc' }}>{time}</Text>
+                            <Text style={{ color: Colors.WHITE, fontSize: 12, marginBottom: 15, marginRight: 8, color: Colors.SIMPLEGRAY }}>{time}</Text>
                         </View>
                         {/* <View style={{ alignSelf: 'flex-end' }}>
                             <View style={{ height: 10, width: 10, borderRadius: 5, marginTop: 5, marginRight: 10, backgroundColor: '#0499ff' }}></View>

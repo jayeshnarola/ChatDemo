@@ -16,6 +16,9 @@ const images = {
   ChatUser6: require('../Assets/Images/chatUser6.jpg'),
   ChatUser7: require('../Assets/Images/chatUser7.jpg'),
   ChatUser8: require('../Assets/Images/chatUser8.jpeg'),
+  LeftArrow: require('../Assets/Images/leftArrow.png'),
+  PhoneCall: require('../Assets/Images/phoneCall.png'),
+  SendButton: require('../Assets/Images/paperPlane.png'),
 };
 
 export default images;
