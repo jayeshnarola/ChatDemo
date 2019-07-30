@@ -12,6 +12,35 @@ class Login extends Component {
         console.log(this.props);
         
     }
+    onLogin(){
+
+        params = {
+            "user_name_email": this.state.email,
+            "password": this.state.password,
+            "device_token": "1234567890",
+            "device_type": "1",
+            "is_testdata": "1"
+        }
+        console.log("params",params);
+        
+        fetch("http://192.168.1.155/ChatDemoAPI/ChatApp.php?Service=Login", {
+            headers: {
+                "Content-Type": "application/json",
+            },
+            method: "post",
+            body: JSON.stringify(params)
+        })
+            .then(response => response.json())
+            .then((responseJson) => {
+                console.log("response", responseJson);
+                if(responseJson.status == '1'){
+                    this.props.navigation.navigate('ChatList')
+                }
+
+            })
+            .catch(error => console.log(error))
+        
+    }
     render() {
         return (
             <View style={{ flex: 1, backgroundColor: Colors.MATEBLACK }}>
@@ -33,6 +62,7 @@ class Login extends Component {
                                     style={{
                                         marginTop: 5,
                                     }}
+                                    onChangeText = {(text)=> this.setState({email:text}) }
                                     value={this.state.email}
                                     onBlur={this.onBlur}
                                 >Your Email
@@ -52,6 +82,7 @@ class Login extends Component {
                                     style={{
                                         marginTop: 5,
                                     }}
+                                    onChangeText = {(text)=> this.setState({password:text}) }
                                     value={this.state.password}
                                     onBlur={this.onBlur}
                                 >Enter Password
@@ -63,7 +94,7 @@ class Login extends Component {
                         </View>
 
                         <View style={{ height: 80, justifyContent:'flex-end',alignItems:'center' }}>
-                            <TouchableOpacity onPress={()=>{this.props.navigation.navigate('ChatList')}} style={{height:45,width:320,flexDirection:'row', justifyContent:'center',alignItems:'center', borderRadius:22.5, backgroundColor:Colors.MATEBLACK}}>
+                            <TouchableOpacity onPress={()=> this.onLogin() } style={{height:45,width:320,flexDirection:'row', justifyContent:'center',alignItems:'center', borderRadius:22.5, backgroundColor:Colors.MATEBLACK}}>
                                     <Text style={{color:Colors.WHITE,fontWeight:'500'}}>Login</Text>
                                     <Image style={{height:10,width:20,marginLeft:10, tintColor:Colors.WHITE}} source={Images.RightArrow} />
                             </TouchableOpacity>
