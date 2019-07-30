@@ -2,20 +2,38 @@ import React, { Component } from 'react';
 import { View, Text, SafeAreaView,Platform, TextInput, Keyboard, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { Colors, Images, Matrics } from '../Config';
 import LinearGradient from 'react-native-linear-gradient';
+import SocketIOClient from 'socket.io-client';
 
 export default class ChatRoom extends Component {
 
     state={
         padding:0,
-        message:''
+        message:'',
+        messages:[]
+    }
+    componentWillMount(){
     }
     componentDidMount(){
+        console.log(this.props);
+        this.socket = SocketIOClient('http://localhost:3000');
+        // this.socket.emit('JoinSocket',this.props.navigation.state.params.id);
+        
         this.keyboardDidShowListener = Keyboard.addListener("keyboardDidShow", this._keyboardDidShow);
         this.keyboardDidShowListener = Keyboard.addListener("keyboardDidChangeFrame", this._keyboardDidShow);
         this.keyboardDidHideListener = Keyboard.addListener("keyboardDidHide", this._keyboardDidHide);
         setTimeout(() => {
             this.scrollToEnd(true);
-          }, 10);
+        }, 10);
+        let msg = [];
+        this.socket.on('receive',data=>{
+            console.log("data",data);
+            if(data != ''){
+                msg.push(data)
+                this.setState({messages:msg});
+                console.log("messages",this.state.messages);
+            }
+        })
+        
     }
     _keyboardDidShow = e => {
         var keyboardHeight = e.endCoordinates.height;
@@ -79,6 +97,10 @@ export default class ChatRoom extends Component {
             </View>
         )
     }
+    sendMessage(){
+        this.socket.emit('channel1', this.state.message);
+        this.setState({message:''})
+    }
     render() {
         return (
             <SafeAreaView style={{ flex: 1, backgroundColor: Colors.BLACK,marginBottom: Platform.OS === "ios" ? Matrics.ScaleValue(this.state.padding) : 0 }}>
@@ -112,7 +134,7 @@ export default class ChatRoom extends Component {
                     </TextInput>
                     </View>
                     <View style={styles.sendButtonView}>
-                        <TouchableOpacity style={styles.sendTouchView}>
+                        <TouchableOpacity style={styles.sendTouchView} onPress={()=>this.sendMessage()}>
                         <Image style={styles.sendImage} source={Images.SendButton} />
                         </TouchableOpacity>
                     </View>
