@@ -16,7 +16,6 @@ const images = {
   ChatUser6: require('../Assets/Images/chatUser6.jpg'),
   ChatUser7: require('../Assets/Images/chatUser7.jpg'),
   ChatUser8: require('../Assets/Images/chatUser8.jpeg'),
-  Dot: require('../Assets/Images/dot.png'),
 };
 
 export default images;
