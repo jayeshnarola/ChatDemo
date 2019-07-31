@@ -3,7 +3,7 @@ import { View, Text, FlatList, SafeAreaView, Image, ScrollView, TouchableOpacity
 import { Colors, Images } from '../Config';
 import SocketIOClient from 'socket.io-client';
 import AsyncStorage from '@react-native-community/async-storage';
-import moment from 'react-moment'
+import moment from 'moment'
 
 class ChatList extends React.Component {
     state = {
