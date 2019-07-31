@@ -6,10 +6,18 @@ import AsyncStorage from '@react-native-community/async-storage';
 import moment from 'moment'
 
 class ChatList extends React.Component {
-    state = {
-        userInfo: {},
-        chatListUsers: [],
-
+    constructor(props) {
+        super(props)
+        this.state = {
+            userInfo: global.userInfo,
+            chatListUsers: [],
+        }
+        this.socket = SocketIOClient('http://192.168.1.155:3000');
+        this.socket.emit('JoinSocket', { id: global.userInfo.id });
+        global.socket = this.socket
+        this.socket.on("ReceiveMessage", data => {
+            this.getConversionList()
+        });
     }
 
     renderHeader() {
@@ -26,21 +34,22 @@ class ChatList extends React.Component {
             </View>
         )
     }
+
     componentWillMount() {
         // AsyncStorage.clear()
 
     }
     componentDidMount() {
-        this.socket = SocketIOClient('http://192.168.1.155:3000');
-        AsyncStorage.getItem('userInfo').then(data => {
+        // this.socket = SocketIOClient('http://192.168.1.155:3000');
+        // AsyncStorage.getItem('userInfo').then(data => {
 
-            this.setState({ userInfo: JSON.parse(data) })
+        //     this.setState({ userInfo: JSON.parse(data) })
 
-            this.socket.emit('JoinSocket', { id: this.state.userInfo.id });
+        //     this.socket.emit('JoinSocket', { id: this.state.userInfo.id });
 
-            this.getConversionList();
+        this.getConversionList();
 
-        })
+        // })
     }
     getConversionList() {
         params = {
@@ -66,9 +75,14 @@ class ChatList extends React.Component {
             })
             .catch(error => console.log(error))
     }
-    gotoChatRoom(item) {
-        this.props.navigation.navigate('ChatRoom', { ReceiverId: item.item.receiver_id, ReceiverName: item.item.other_user_first_name + " " + item.item.other_user_last_name, following_status: item.item.following_status })
+    onRefresh() {
+        this.getConversionList()
     }
+    gotoChatRoom(item) {
+        console.log(item, "item")
+        this.props.navigation.navigate('ChatRoom', { ReceiverId: item.item.other_user_id, onRefresh: () => this.onRefresh(), otherUserDetails: item.item, ReceiverName: item.item.other_user_first_name + " " + item.item.other_user_last_name, following_status: item.item.following_status })
+    }
+
     renderChatList = (item) => {
         return (
             <TouchableOpacity onPress={() => this.gotoChatRoom(item)} style={{ height: 70, width: '100%', flexDirection: 'row' }}>
@@ -89,7 +103,7 @@ class ChatList extends React.Component {
                         <Text style={{ color: Colors.WHITE, color: Colors.SIMPLEGRAY, fontSize: 10 }}>{item.item ? moment.utc(item.item.created_date).fromNow() : ''}</Text>
                     </View>
                     {
-                        item.item && item.item.un_read_counter == 1 &&
+                        item.item && item.item.un_read_counter > 0 &&
                         <View style={{ alignSelf: 'flex-end' }}>
                             <View style={{ height: 8, width: 8, borderRadius: 4, marginTop: 8, marginRight: 10, backgroundColor: Colors.ONLINEDOTCOLOR }}></View>
                         </View>

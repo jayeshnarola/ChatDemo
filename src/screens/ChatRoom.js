@@ -12,29 +12,49 @@ export default class ChatRoom extends Component {
         message: '',
         userInfo: {},
         messageList: [],
-        accStatus:'',
-        following_status:this.props.navigation.state.params.following_status,
-        receiverName:this.props.navigation.state.params.ReceiverName
+        accStatus: '',
+        following_status: this.props.navigation.state.params.following_status,
+        receiverName: this.props.navigation.state.params.ReceiverName
+    }
+    constructor(props) {
+        super(props)
+        this.socket = global.socket
+        this.socket.on("ReceiveMessage", data => {
+            console.log(data, "socket response")
+            let arr = this.state.messageList;
+            arr['me'] = 1
+            this.getMessageList()
+            this.readMessage()
+            this.props.navigation.state.params.onRefresh()
+        });
+
+    }
+    readMessage() {
+        const readObject = { coversation_id: this.props.navigation.state.params.otherUserDetails.conversion_id, receiver_id: global.userInfo.id };
+        this.socket.emit("ReadMessage", readObject);
+        setTimeout(() => {
+            this.props.navigation.state.params.onRefresh()
+        }, 500);
+
     }
     componentWillMount() {
-        // console.log(this.props);
-        // console.log("Statis",this.state.following_status);
-        
+        this.readMessage()
         AsyncStorage.getItem('userInfo').then(data => {
+            console.log(data, this.props)
             this.setState({ userInfo: JSON.parse(data) })
             this.getMessageList();
 
         })
-        
+
     }
     componentDidMount() {
-        let msgList=this.state.messageList;
-        this.socket = SocketIOClient('http://192.168.1.155:3000');
-        this.socket.on('ReceiveMessage',data=>{
-            console.log("Socket",data);
-            msgList.push(data)
-            this.setState({messageList:msgList})
-        })
+
+        // this.socket.on('ReceiveMessage',data=>{
+        //     console.log("Socket",data);
+        //     msgList.push(data)
+        //     this.setState({messageList:msgList})
+        // })
+
 
         this.keyboardDidShowListener = Keyboard.addListener("keyboardDidShow", this._keyboardDidShow);
         this.keyboardDidShowListener = Keyboard.addListener("keyboardDidChangeFrame", this._keyboardDidShow);
@@ -88,7 +108,7 @@ export default class ChatRoom extends Component {
             "other_user_id": this.props.navigation.state.params.ReceiverId,
             "is_testdata": "0"
         }
-
+        console.log(params)
         fetch("http://192.168.1.155/ChatDemoAPI/ChatApp.php?Service=GetMessageList", {
             headers: {
                 "Content-Type": "application/json",
@@ -121,10 +141,11 @@ export default class ChatRoom extends Component {
             me: 1,
             is_testdata: 0
         };
-        // console.log(dataObj);
+        console.log(dataObj);
 
         this.socket.emit("SendNewMessage", dataObj);
-        this.getMessageList();
+        let arr = this.state.messageList
+        arr.push(dataObj)
         setTimeout(() => {
             this.scrollToEnd(true);
         }, 500);
@@ -150,13 +171,13 @@ export default class ChatRoom extends Component {
             .then((responseJson) => {
                 console.log("response", responseJson);
                 if (responseJson.status == "1") {
-                    if(responseJson.data.user_account == 'PRIVATE'){
+                    if (responseJson.data.user_account == 'PRIVATE') {
 
-                        this.setState({ accStatus: responseJson.data.user_account})
+                        this.setState({ accStatus: responseJson.data.user_account })
                     }
-                    // else{
-                    //     this.setState({following_status:1})    
-                    // }
+                    else {
+                        this.setState({ following_status: 1 })
+                    }
                 }
 
             })
@@ -196,53 +217,53 @@ export default class ChatRoom extends Component {
         return (
             <SafeAreaView style={{ flex: 1, backgroundColor: Colors.BLACK, marginBottom: Platform.OS === "ios" ? Matrics.ScaleValue(this.state.padding) : 0 }}>
                 {this.renderHeader()}
-                {
-                    this.state.following_status == 1 ?
-                        <View style={{ flex: 1 }}>
-                            <FlatList
-                                ref={this.setRef}
-                                data={this.state.messageList}
-                                extraData={this.state}
-                                keyExtractor={this._keyExtractor}
-                                renderItem={this.renderMessages}
-                            />
-                            <View style={styles.input}>
-                                <View style={styles.inputView}>
-                                    <TextInput
-                                        onChangeText={text => this.setState({ message: text })}
-                                        value={this.state.message}
-                                        style={{ color: Colors.SIMPLEGRAY }}
-                                        placeholder={'Type your message'}
-                                        autoCorrect={false}
-                                        placeholderTextColor={Colors.SIMPLEGRAY}
-                                        underlineColorAndroid='transparent'>
-                                    </TextInput>
-                                </View>
-                                <View style={styles.sendButtonView}>
-                                    <TouchableOpacity style={styles.sendTouchView} onPress={() => this.sendMessage()}>
-                                        <Image style={styles.sendImage} source={Images.SendButton} />
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
+                {/* {
+                    this.state.following_status == 1 ? */}
+                <View style={{ flex: 1 }}>
+                    <FlatList
+                        ref={this.setRef}
+                        data={this.state.messageList}
+                        extraData={this.state}
+                        keyExtractor={this._keyExtractor}
+                        renderItem={this.renderMessages}
+                    />
+                    <View style={styles.input}>
+                        <View style={styles.inputView}>
+                            <TextInput
+                                onChangeText={text => this.setState({ message: text })}
+                                value={this.state.message}
+                                style={{ color: Colors.SIMPLEGRAY }}
+                                placeholder={'Type your message'}
+                                autoCorrect={false}
+                                placeholderTextColor={Colors.SIMPLEGRAY}
+                                underlineColorAndroid='transparent'>
+                            </TextInput>
                         </View>
-                        :
-                        <View style={{ flex: 1, backgroundColor: Colors.BLACK, justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={styles.sendButtonView}>
+                            <TouchableOpacity style={styles.sendTouchView} onPress={() => this.sendMessage()}>
+                                <Image style={styles.sendImage} source={Images.SendButton} />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+
+                {/* <View style={{ flex: 1, backgroundColor: Colors.BLACK, justifyContent: 'center', alignItems: 'center' }}>
                             <View style={{ height: 200, width: '80%', borderRadius: 15, alignItems: 'center', backgroundColor: Colors.WHITE, justifyContent: 'flex-end', alignSelf: 'center' }}>
-                              {
-                                  this.state.following_status == 0 &&
-                                <TouchableOpacity onPress={() => this.followUser()} style={{ height: 45, borderRadius: 25, justifyContent: 'center', alignItems: 'center', width: '70%', marginBottom: 15, backgroundColor: Colors.MATEBLACK }}>
-                                    <Text style={{ color: Colors.WHITE }}>Follow</Text>
-                                </TouchableOpacity>
-                              }  
-                              {
-                                  this.state.following_status == 3 &&
-                                  <TouchableOpacity disabled={true} style={{ height: 45, borderRadius: 25, justifyContent: 'center', alignItems: 'center', width: '70%', marginBottom: 15, backgroundColor: Colors.MATEBLACK }}>
-                                      <Text style={{ color: Colors.WHITE }}>REQUESTED</Text>
-                                  </TouchableOpacity> 
-                              }
+                                {
+                                    this.state.following_status == 0 &&
+                                    <TouchableOpacity onPress={() => this.followUser()} style={{ height: 45, borderRadius: 25, justifyContent: 'center', alignItems: 'center', width: '70%', marginBottom: 15, backgroundColor: Colors.MATEBLACK }}>
+                                        <Text style={{ color: Colors.WHITE }}>Follow</Text>
+                                    </TouchableOpacity>
+                                }
+                                {
+                                    this.state.following_status == 3 &&
+                                    <TouchableOpacity disabled={true} style={{ height: 45, borderRadius: 25, justifyContent: 'center', alignItems: 'center', width: '70%', marginBottom: 15, backgroundColor: Colors.MATEBLACK }}>
+                                        <Text style={{ color: Colors.WHITE }}>REQUESTED</Text>
+                                    </TouchableOpacity>
+                                }
                             </View>
-                        </View>
-                }
+                        </View> */}
+
 
             </SafeAreaView>
         )

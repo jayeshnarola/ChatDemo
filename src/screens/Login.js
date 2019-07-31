@@ -14,6 +14,7 @@ class Login extends Component {
         console.log(this.props);
         AsyncStorage.getItem('userInfo').then(data=>{
             if(data!= null || data != undefined){
+                global.userInfo = JSON.parse(data)
                 const resetAction = StackActions.reset({
                     index: 0,
                     actions: [NavigationActions.navigate({ routeName: 'ChatList' })],
