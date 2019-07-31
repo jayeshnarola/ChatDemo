@@ -14,12 +14,12 @@ export default class ChatRoom extends Component {
         messageList: [],
         accStatus:'',
         following_status:this.props.navigation.state.params.following_status,
-        isFollowClick:false,
         receiverName:this.props.navigation.state.params.ReceiverName
     }
     componentWillMount() {
-        console.log(this.props);
-
+        // console.log(this.props);
+        // console.log("Statis",this.state.following_status);
+        
         AsyncStorage.getItem('userInfo').then(data => {
             this.setState({ userInfo: JSON.parse(data) })
             this.getMessageList();
@@ -30,11 +30,11 @@ export default class ChatRoom extends Component {
     componentDidMount() {
         let msgList=this.state.messageList;
         this.socket = SocketIOClient('http://192.168.1.155:3000');
-        // this.socket.on('ReceiveMessage').then(data=>{
-        //     console.log(data);
-        //     msgList.push(data)
-        //     this.setState({messageList:msgList})
-        // })
+        this.socket.on('ReceiveMessage',data=>{
+            console.log("Socket",data);
+            msgList.push(data)
+            this.setState({messageList:msgList})
+        })
 
         this.keyboardDidShowListener = Keyboard.addListener("keyboardDidShow", this._keyboardDidShow);
         this.keyboardDidShowListener = Keyboard.addListener("keyboardDidChangeFrame", this._keyboardDidShow);
@@ -71,7 +71,7 @@ export default class ChatRoom extends Component {
                         <Text style={styles.nameText}>{this.state.receiverName}</Text>
                     </View>
                     <View>
-                        <Text style={styles.statusText}>Online now</Text>
+                        {/* <Text style={styles.statusText}>Online now</Text> */}
                     </View>
                 </View>
                 <TouchableOpacity style={styles.callView}>
@@ -152,11 +152,11 @@ export default class ChatRoom extends Component {
                 if (responseJson.status == "1") {
                     if(responseJson.data.user_account == 'PRIVATE'){
 
-                        this.setState({ accStatus: responseJson.data.user_account, isFollowClick:true })
+                        this.setState({ accStatus: responseJson.data.user_account})
                     }
-                    else{
-                        this.setState({following_status:1})    
-                    }
+                    // else{
+                    //     this.setState({following_status:1})    
+                    // }
                 }
 
             })
@@ -229,13 +229,13 @@ export default class ChatRoom extends Component {
                         <View style={{ flex: 1, backgroundColor: Colors.BLACK, justifyContent: 'center', alignItems: 'center' }}>
                             <View style={{ height: 200, width: '80%', borderRadius: 15, alignItems: 'center', backgroundColor: Colors.WHITE, justifyContent: 'flex-end', alignSelf: 'center' }}>
                               {
-                                  this.state.isFollowClick == false &&
+                                  this.state.following_status == 0 &&
                                 <TouchableOpacity onPress={() => this.followUser()} style={{ height: 45, borderRadius: 25, justifyContent: 'center', alignItems: 'center', width: '70%', marginBottom: 15, backgroundColor: Colors.MATEBLACK }}>
                                     <Text style={{ color: Colors.WHITE }}>Follow</Text>
                                 </TouchableOpacity>
                               }  
                               {
-                                  this.state.accStatus == 'PRIVATE' &&
+                                  this.state.following_status == 3 &&
                                   <TouchableOpacity disabled={true} style={{ height: 45, borderRadius: 25, justifyContent: 'center', alignItems: 'center', width: '70%', marginBottom: 15, backgroundColor: Colors.MATEBLACK }}>
                                       <Text style={{ color: Colors.WHITE }}>REQUESTED</Text>
                                   </TouchableOpacity> 

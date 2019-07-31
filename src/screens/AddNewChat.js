@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 class AddNewChat extends React.Component {
     state = {
         userInfo: {},
-        userList: []
+        userList: [],
     }
 
     renderHeader() {
@@ -30,7 +30,7 @@ class AddNewChat extends React.Component {
                 "user_id": this.state.userInfo.id,
                 "offset": "0"
             }
-            console.log(params);
+            // console.log(params);
 
             fetch("http://192.168.1.155/ChatDemoAPI/ChatApp.php?Service=SearchUsers", {
                 headers: {
@@ -44,26 +44,18 @@ class AddNewChat extends React.Component {
                 .then((responseJson) => {
                     // console.log("response", responseJson);
                     this.setState({ userList: responseJson.data.user_listing })
-                    console.log("Userlist", this.state.userList);
-
-                    // if(responseJson.status == '1'){
-                    //     AsyncStorage.setItem('userInfo',JSON.stringify(responseJson.data.User))
-                    //     this.props.navigation.navigate('ChatList')
-                    // }
-
+                    // console.log("Userlist", this.state.userList);
                 })
                 .catch(error => console.log(error))
         })
     }
     componentDidMount() {
         this.socket = SocketIOClient('http://192.168.1.155:3000');
-
-
     }
     gotoChatRoom(item) {
-        // console.log(item.following_status);
+        console.log(item);
         // console.log(item.user_id);
-        this.props.navigation.navigate('ChatRoom', { ReceiverId: item.user_id, following_status : item.following_status  })
+        this.props.navigation.navigate('ChatRoom', { ReceiverId: item.user_id, following_status : item.following_status,ReceiverName: item.firstname + " " + item.lastname  })
     }
     renderChat= (item) =>  {
         console.log("Item",item);  
