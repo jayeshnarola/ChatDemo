@@ -1,62 +1,113 @@
 import React from 'react';
-import { View, Text, SafeAreaView, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, SafeAreaView, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { Colors, Images } from '../Config';
 import SocketIOClient from 'socket.io-client';
+import AsyncStorage from '@react-native-community/async-storage';
+import moment from 'react-moment'
 
 class ChatList extends React.Component {
-
+    state = {
+        userInfo: {},
+        chatListUsers: [],
+        
+    }
 
     renderHeader() {
         return (
-            <View style={{ height: 55, width: '100%', backgroundColor: Colors.MATEBLACK, justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={{ color: Colors.WHITE, fontSize: 20 }}>Chat List</Text>
+            <View style={{ height: 55, flexDirection: 'row', width: '100%', backgroundColor: Colors.MATEBLACK }}>
+                <View style={{ flex: 0.1 }}>
+                </View>
+                <View style={{ justifyContent: 'center', alignItems: 'center', flex: 0.8 }}>
+                    <Text style={{ color: Colors.WHITE, fontSize: 20 }}>Chat List</Text>
+                </View>
+                <TouchableOpacity onPress={() => { this.props.navigation.navigate('AddNewChat') }} style={{ flex: 0.1, justifyContent: 'center', alignItems: 'center' }}>
+                    <Image style={{ height: 20, width: 20, tintColor: Colors.WHITE }} source={Images.AddButton} />
+                </TouchableOpacity>
             </View>
         )
     }
-    componentDidMount(){
-        this.socket = SocketIOClient('http://localhost:3000');
+    componentWillMount() {
+        // AsyncStorage.clear()
+       
+    }
+    componentDidMount() {
+        this.socket = SocketIOClient('http://192.168.1.155:3000');
+        AsyncStorage.getItem('userInfo').then(data => {
+
+            this.setState({ userInfo: JSON.parse(data) })
+
+            this.socket.emit('JoinSocket', { id: this.state.userInfo.id });
+
+            params = {
+                "device_token": "123456",
+                "device_type": 1,
+                "user_id": this.state.userInfo.id,
+                "is_testdata": "1"
+            }
+            // console.log("params", params);
+
+            fetch("http://192.168.1.155/ChatDemoAPI/ChatApp.php?Service=GetConversationList", {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                method: "post",
+                body: JSON.stringify(params)
+            })
+                .then(response => response.json())
+                .then((responseJson) => {
+                    console.log("response", responseJson);
+                    if (responseJson.status == "1") {
+                        this.setState({ chatListUsers: responseJson.data })
+                    }
+
+                })
+                .catch(error => console.log(error))
+        })
 
     }
-    gotoChatRoom(id){
-        this.socket.emit('JoinSocket',{id:id});
-        this.props.navigation.navigate('ChatRoom',{id:id})
+    gotoChatRoom(item) {
+        this.props.navigation.navigate('ChatRoom', { ReceiverId: item.item.receiver_id, ReceiverName: item.item.other_user_first_name + " " + item.item.other_user_last_name })
     }
-    renderChat(name,uid, userImg, msg, time) {
+    renderChatList = (item) => {
         return (
-            <TouchableOpacity onPress={()=> this.gotoChatRoom(uid)} style={{ height: 70, width: '100%', flexDirection: 'row' }}>
+            <TouchableOpacity onPress={() => this.gotoChatRoom(item)} style={{ height: 70, width: '100%', flexDirection: 'row' }}>
                 <View style={{ flex: 0.18, justifyContent: 'center', alignItems: 'center' }}>
-                    <Image style={{ height: 40, width: 40, borderRadius: 25 }} source={userImg} />
+                    <Image style={{ height: 40, width: 40, borderRadius: 25 }} source={Images.ChatUser1} />
                 </View>
                 <View style={{ flex: 0.70, justifyContent: 'center' }}>
                     <View>
-                        <Text style={{ fontWeight: 'bold', fontSize: 15, color: Colors.WHITE }}>{name}</Text>
+                        <Text style={{ fontWeight: 'bold', fontSize: 15, color: Colors.WHITE }}>{item.item ? item.item.other_user_first_name : ''} {item.item ? item.item.other_user_last_name : ''}</Text>
                     </View>
                     <View>
-                        <Text style={{ color: Colors.WHITE, marginTop: 5, color: Colors.SIMPLEGRAY, fontSize: 13 }}>{msg}</Text>
+                        <Text style={{ color: Colors.WHITE, marginTop: 5, color: Colors.SIMPLEGRAY, fontSize: 13 }}>{item.item ? item.item.last_message : ''}</Text>
                     </View>
                 </View>
-                {
-                    time == 'now' &&
-                    <View style={{ flex: 0.12, justifyContent: 'center', alignItems: 'center' }}>
-                        <View>
-                            <Text style={{ color: Colors.WHITE,color:Colors.SIMPLEGRAY }}>now</Text>
+                
+                   
+                        <View style={{ flex: 0.12, justifyContent: 'center', alignItems: 'center' }}>
+                            <View>
+                                <Text style={{ color: Colors.WHITE, color: Colors.SIMPLEGRAY }}>{item.item ? moment().fromNow(item.item.created_date) : ''}</Text>
+                            </View>
+                            {
+                                 item.item && item.item.un_read_counter == 1 &&
+                            <View style={{ alignSelf: 'flex-end' }}>
+                                <View style={{ height: 8, width: 8, borderRadius: 4, marginTop: 8, marginRight: 10, backgroundColor: Colors.ONLINEDOTCOLOR }}></View>
+                            </View>
+                            
+                            }
                         </View>
-                        <View style={{ alignSelf: 'flex-end' }}>
+                        {/* :
+                        <View style={{ flex: 0.12, justifyContent: 'center', alignItems: 'center' }}>
+                            <View>
+                                <Text style={{ color: Colors.WHITE, color: Colors.SIMPLEGRAY }}>{'9:15'}</Text>
+                            </View> */}
+                            {/* <View style={{ alignSelf: 'flex-end' }}>
                             <View style={{ height: 8, width: 8, borderRadius: 4, marginTop: 8, marginRight: 10, backgroundColor: Colors.ONLINEDOTCOLOR }}></View>
-                        </View>
-                    </View>
-                }
-                {
-                    time != 'now' &&
-                    <View style={{ flex: 0.12, justifyContent: 'center', alignItems: 'center' }}>
-                        <View>
-                            <Text style={{ color: Colors.WHITE, fontSize: 12, marginBottom: 15, marginRight: 8, color: Colors.SIMPLEGRAY }}>{time}</Text>
-                        </View>
-                        {/* <View style={{ alignSelf: 'flex-end' }}>
-                            <View style={{ height: 10, width: 10, borderRadius: 5, marginTop: 5, marginRight: 10, backgroundColor: '#0499ff' }}></View>
                         </View> */}
-                    </View>
-                }
+                        {/* </View> */}
+               
+
+
             </TouchableOpacity>
         )
     }
@@ -65,15 +116,14 @@ class ChatList extends React.Component {
             <SafeAreaView style={{ flex: 1, backgroundColor: Colors.MATEBLACK }}>
                 {this.renderHeader()}
                 <ScrollView>
-                    {this.renderChat('John Sinha',1, Images.ChatUser1, 'hello john how are you?', '10:25')}
-                    {this.renderChat('Ramesh Patel',2, Images.ChatUser2, 'Are you busy?', 'now')}
-                    {this.renderChat('Nitesh Gujar',3, Images.ChatUser3, 'Hey man, how are you?', '16:10')}
-                    {this.renderChat('Praful Argiddi',4, Images.ChatUser4, 'are you there praful?', 'now')}
-                    {this.renderChat('Nitin Patel',5, Images.ChatUser5, 'Hello brother...', '15:22')}
-                    {this.renderChat('Rahul Patil',6, Images.ChatUser6, 'Hey rahul patil saheba', '12:25')}
-                    {this.renderChat('Jayesh Patil',7, Images.ChatUser7, 'today whats your plan for movie', '1:25')}
-                    {this.renderChat('Radhika Patel',8, Images.ChatUser8, 'Hello dear', '5:25')}
+                    <FlatList
+                        data={this.state.chatListUsers}
+                        extraData={this.state}
+                        keyExtractor={this._keyExtractor}
+                        renderItem={this.renderChatList}
+                    />
                 </ScrollView>
+
             </SafeAreaView>
         )
     }

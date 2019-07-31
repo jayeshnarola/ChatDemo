@@ -19,6 +19,7 @@ const images = {
   LeftArrow: require('../Assets/Images/leftArrow.png'),
   PhoneCall: require('../Assets/Images/phoneCall.png'),
   SendButton: require('../Assets/Images/paperPlane.png'),
+  AddButton: require('../Assets/Images/add.png'),
 };
 
 export default images;

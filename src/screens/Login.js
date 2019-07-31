@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { Colors, Images, Matrics } from '../Config';
 var FloatingLabel = require('react-native-floating-labels');
+import AsyncStorage from '@react-native-community/async-storage';
+import { StackActions, NavigationActions } from 'react-navigation';
 
 class Login extends Component {
     state = {
@@ -10,7 +12,15 @@ class Login extends Component {
     }
     componentWillMount(){
         console.log(this.props);
-        
+        AsyncStorage.getItem('userInfo').then(data=>{
+            if(data!= null || data != undefined){
+                const resetAction = StackActions.reset({
+                    index: 0,
+                    actions: [NavigationActions.navigate({ routeName: 'ChatList' })],
+                  });
+                  this.props.navigation.dispatch(resetAction);
+            }
+        })
     }
     onLogin(){
 
@@ -34,6 +44,7 @@ class Login extends Component {
             .then((responseJson) => {
                 console.log("response", responseJson);
                 if(responseJson.status == '1'){
+                    AsyncStorage.setItem('userInfo',JSON.stringify(responseJson.data.User))
                     this.props.navigation.navigate('ChatList')
                 }
 

@@ -6,6 +6,7 @@ import Register from './screens/Register'
 import ChatList from "./screens/ChatList";
 import Profile from "./screens/Profile";
 import ChatRoom from "./screens/ChatRoom";
+import AddNewChat from "./screens/AddNewChat";
 import { Images } from "./Config";
 
 const TabNavigator = createBottomTabNavigator({
@@ -66,6 +67,12 @@ const AppNavigator = createStackNavigator({
     },
     ChatRoom: {
         screen: ChatRoom,
+        navigationOptions: {
+            header: null
+        }
+    },
+    AddNewChat: {
+        screen: AddNewChat,
         navigationOptions: {
             header: null
         }
