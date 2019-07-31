@@ -9,7 +9,7 @@ class ChatList extends React.Component {
     state = {
         userInfo: {},
         chatListUsers: [],
-        
+
     }
 
     renderHeader() {
@@ -28,7 +28,7 @@ class ChatList extends React.Component {
     }
     componentWillMount() {
         // AsyncStorage.clear()
-       
+
     }
     componentDidMount() {
         this.socket = SocketIOClient('http://192.168.1.155:3000');
@@ -39,19 +39,16 @@ class ChatList extends React.Component {
             this.socket.emit('JoinSocket', { id: this.state.userInfo.id });
 
             this.getConversionList();
-            
-        })
 
+        })
     }
-    getConversionList(){
+    getConversionList() {
         params = {
             "device_token": "123456",
             "device_type": 1,
             "user_id": this.state.userInfo.id,
             "is_testdata": "1"
         }
-        // console.log("params", params);
-
         fetch("http://192.168.1.155/ChatDemoAPI/ChatApp.php?Service=GetConversationList", {
             headers: {
                 "Content-Type": "application/json",
@@ -70,9 +67,7 @@ class ChatList extends React.Component {
             .catch(error => console.log(error))
     }
     gotoChatRoom(item) {
-        console.log("item",item);
-        
-        this.props.navigation.navigate('ChatRoom', { ReceiverId: item.item.receiver_id, ReceiverName: item.item.other_user_first_name + " " + item.item.other_user_last_name,following_status : item.item.following_status })
+        this.props.navigation.navigate('ChatRoom', { ReceiverId: item.item.receiver_id, ReceiverName: item.item.other_user_first_name + " " + item.item.other_user_last_name, following_status: item.item.following_status })
     }
     renderChatList = (item) => {
         return (
@@ -88,32 +83,18 @@ class ChatList extends React.Component {
                         <Text style={{ color: Colors.WHITE, marginTop: 5, color: Colors.SIMPLEGRAY, fontSize: 13 }}>{item.item ? item.item.last_message : ''}</Text>
                     </View>
                 </View>
-                
-                   
-                        <View style={{ flex: 0.17, justifyContent: 'center', alignItems: 'center' }}>
-                            <View>
-                                <Text style={{ color: Colors.WHITE, color: Colors.SIMPLEGRAY,fontSize:10 }}>{item.item ? moment.utc(item.item.created_date).fromNow() : ''}</Text>
-                            </View>
-                            {
-                                 item.item && item.item.un_read_counter == 1 &&
-                            <View style={{ alignSelf: 'flex-end' }}>
-                                <View style={{ height: 8, width: 8, borderRadius: 4, marginTop: 8, marginRight: 10, backgroundColor: Colors.ONLINEDOTCOLOR }}></View>
-                            </View>
-                            
-                            }
-                        </View>
-                        {/* :
-                        <View style={{ flex: 0.12, justifyContent: 'center', alignItems: 'center' }}>
-                            <View>
-                                <Text style={{ color: Colors.WHITE, color: Colors.SIMPLEGRAY }}>{'9:15'}</Text>
-                            </View> */}
-                            {/* <View style={{ alignSelf: 'flex-end' }}>
+
+                <View style={{ flex: 0.17, justifyContent: 'center', alignItems: 'center' }}>
+                    <View>
+                        <Text style={{ color: Colors.WHITE, color: Colors.SIMPLEGRAY, fontSize: 10 }}>{item.item ? moment.utc(item.item.created_date).fromNow() : ''}</Text>
+                    </View>
+                    {
+                        item.item && item.item.un_read_counter == 1 &&
+                        <View style={{ alignSelf: 'flex-end' }}>
                             <View style={{ height: 8, width: 8, borderRadius: 4, marginTop: 8, marginRight: 10, backgroundColor: Colors.ONLINEDOTCOLOR }}></View>
-                        </View> */}
-                        {/* </View> */}
-               
-
-
+                        </View>
+                    }
+                </View>
             </TouchableOpacity>
         )
     }
