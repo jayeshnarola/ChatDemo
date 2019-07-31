@@ -38,32 +38,36 @@ class ChatList extends React.Component {
 
             this.socket.emit('JoinSocket', { id: this.state.userInfo.id });
 
-            params = {
-                "device_token": "123456",
-                "device_type": 1,
-                "user_id": this.state.userInfo.id,
-                "is_testdata": "1"
-            }
-            // console.log("params", params);
-
-            fetch("http://192.168.1.155/ChatDemoAPI/ChatApp.php?Service=GetConversationList", {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                method: "post",
-                body: JSON.stringify(params)
-            })
-                .then(response => response.json())
-                .then((responseJson) => {
-                    console.log("response", responseJson);
-                    if (responseJson.status == "1") {
-                        this.setState({ chatListUsers: responseJson.data })
-                    }
-
-                })
-                .catch(error => console.log(error))
+            this.getConversionList();
+            
         })
 
+    }
+    getConversionList(){
+        params = {
+            "device_token": "123456",
+            "device_type": 1,
+            "user_id": this.state.userInfo.id,
+            "is_testdata": "1"
+        }
+        // console.log("params", params);
+
+        fetch("http://192.168.1.155/ChatDemoAPI/ChatApp.php?Service=GetConversationList", {
+            headers: {
+                "Content-Type": "application/json",
+            },
+            method: "post",
+            body: JSON.stringify(params)
+        })
+            .then(response => response.json())
+            .then((responseJson) => {
+                console.log("response", responseJson);
+                if (responseJson.status == "1") {
+                    this.setState({ chatListUsers: responseJson.data })
+                }
+
+            })
+            .catch(error => console.log(error))
     }
     gotoChatRoom(item) {
         console.log("item",item);
