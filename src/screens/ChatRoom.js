@@ -4,81 +4,107 @@ import { Colors, Images, Matrics } from '../Config';
 import LinearGradient from 'react-native-linear-gradient';
 import SocketIOClient from 'socket.io-client';
 import AsyncStorage from '@react-native-community/async-storage';
+import { getLoginRequest, getConversionRequest, getMessageList, getUserRoleRequest } from '../Redux/Actions'
+import { connect } from 'react-redux';
 
-export default class ChatRoom extends Component {
+class ChatRoom extends Component {
 
-    state = {
-        padding: 0,
-        message: '',
-        userInfo: {},
-        messageList: [],
-        accStatus: '',
-        following_status: this.props.navigation.state.params.following_status,
-        receiverName: this.props.navigation.state.params.ReceiverName
-    }
     constructor(props) {
         super(props)
+        this.state = {
+            padding: 0,
+            message: '',
+            userInfo: props.auth && props.auth.data && props.auth.data.data && props.auth.data.data.User,
+            messageList: [],
+            accStatus: '',
+            otherUserDetails: props.navigation.state.params && props.navigation.state.params.otherUserDetails
+        }
         this.socket = global.socket
         this.socket.on("ReceiveMessage", data => {
-            console.log(data, "socket response")
-            let arr = this.state.messageList;
-            arr['me'] = 1
-            this.getMessageList()
+            this.callGetMessageList();
+            this.props.getConversionRequest({
+                "device_token": "123456",
+                "device_type": 1,
+                "user_id": this.state.userInfo.id,
+                "is_testdata": "1"
+            })
             this.readMessage()
-            if (this.props.navigation.state.params.onRefresh) {
-                this.props.navigation.state.params.onRefresh()
+            if (this.state.messageList) {
+                setTimeout(() => {
+                    this.scrollToEnd(true);
+                }, 500);
             }
         });
 
     }
     readMessage() {
         if (this.props.navigation.state.params.otherUserDetails) {
-            const readObject = { coversation_id: this.props.navigation.state.params.otherUserDetails && this.props.navigation.state.params.otherUserDetails.conversion_id, receiver_id: global.userInfo.id };
+            const readObject = { coversation_id: this.props.navigation.state.params.otherUserDetails && this.props.navigation.state.params.otherUserDetails.conversion_id, receiver_id: this.state.userInfo.id };
             this.socket.emit("ReadMessage", readObject);
             if (this.props.navigation.state.params.onRefresh) {
                 setTimeout(() => {
-                   this.props.navigation.state.params.onRefresh()
-               }, 500);
+                    this.props.navigation.state.params.onRefresh()
+                }, 500);
             }
         }
         else {
-            const readObject = { coversation_id: 0, receiver_id: global.userInfo.id };
+            const readObject = { coversation_id: 0, receiver_id: this.state.userInfo.id };
             this.socket.emit("ReadMessage", readObject);
         }
 
     }
     componentWillMount() {
+        console.log(this.props, "propsINChatRoom", this.state.otherUserDetails)
+        const { other_user_id } = this.state.otherUserDetails
+        this.setState({ messageList: this.props.chat && this.props.chat.messagesList && this.props.chat.messagesList[other_user_id] && this.props.chat.messagesList[other_user_id].chat_list.reverse() })
         this.readMessage()
-        AsyncStorage.getItem('userInfo').then(data => {
-            console.log(data, this.props)
-            this.setState({ userInfo: JSON.parse(data) })
-            this.getMessageList();
+        // this.getMessageList();
+        this.callGetMessageList();
+    }
+    componentWillReceiveProps(nextProps) {
+        console.log(nextProps,"hey")
+        const { other_user_id } = this.state.otherUserDetails
 
+        this.setState({ messageList: nextProps.chat && nextProps.chat.messagesList && nextProps.chat.messagesList[other_user_id] && nextProps.chat.messagesList[other_user_id].chat_list.reverse() })
+        
+    }
+    componentWillUnmount() {
+        Keyboard.removeListener("keyboardDidShow", this._keyboardDidShow);
+        // this.socket.removeListener("ReceiveMessage");
+    }
+    callGetMessageList() {
+        this.props.getMessageList({
+            "device_token": "123456",
+            "device_type": 1,
+            "user_id": this.state.userInfo.id,
+            "other_user_id": this.state.otherUserDetails.other_user_id,
+            "is_testdata": "0"
         })
-
     }
     componentDidMount() {
-
-        // this.socket.on('ReceiveMessage',data=>{
-        //     console.log("Socket",data);
-        //     msgList.push(data)
-        //     this.setState({messageList:msgList})
-        // })
-
-
         this.keyboardDidShowListener = Keyboard.addListener("keyboardDidShow", this._keyboardDidShow);
         this.keyboardDidShowListener = Keyboard.addListener("keyboardDidChangeFrame", this._keyboardDidShow);
         this.keyboardDidHideListener = Keyboard.addListener("keyboardDidHide", this._keyboardDidHide);
-        setTimeout(() => {
-            this.scrollToEnd(true);
-        }, 500);
+        this.props.getConversionRequest({
+            "device_token": "123456",
+            "device_type": 1,
+            "user_id": this.state.userInfo.id,
+            "is_testdata": "1"
+        })
+        if (this.state.messageList) {
+            setTimeout(() => {
+                this.scrollToEnd(true);
+            }, 500);
+        }
     }
     _keyboardDidShow = e => {
         var keyboardHeight = e.endCoordinates.height;
         this.setState({ padding: keyboardHeight });
-        setTimeout(() => {
-            this.scrollToEnd(true);
-        }, 500);
+        if (this.state.messageList) {
+            setTimeout(() => {
+                this.scrollToEnd(true);
+            }, 500);
+        }
     };
     _keyboardDidHide = e => {
         this.setState({ padding: 0 });
@@ -98,10 +124,7 @@ export default class ChatRoom extends Component {
                 </TouchableOpacity>
                 <View style={styles.middleView}>
                     <View>
-                        <Text style={styles.nameText}>{this.state.receiverName}</Text>
-                    </View>
-                    <View>
-                        {/* <Text style={styles.statusText}>Online now</Text> */}
+                        <Text style={styles.nameText}>{this.state.otherUserDetails.other_user_first_name + " " + this.state.otherUserDetails.other_user_last_name}</Text>
                     </View>
                 </View>
                 <TouchableOpacity style={styles.callView}>
@@ -111,54 +134,61 @@ export default class ChatRoom extends Component {
         )
     }
     getMessageList() {
-        params = {
-            "device_token": "123456",
-            "device_type": 1,
-            "user_id": this.state.userInfo.id,
-            "other_user_id": this.props.navigation.state.params.ReceiverId,
-            "is_testdata": "0"
-        }
-        console.log(params)
-        fetch("http://192.168.1.155/ChatDemoAPI/ChatApp.php?Service=GetMessageList", {
-            headers: {
-                "Content-Type": "application/json",
-            },
-            method: "post",
-            body: JSON.stringify(params)
-        })
-            .then(response => response.json())
-            .then((responseJson) => {
-                console.log("response", responseJson);
-                if (responseJson.status == "1") {
-                    this.setState({ messageList: responseJson.chat_list.reverse() })
-                    setTimeout(() => {
-                        this.scrollToEnd(true);
-                    }, 500);
-                }
+        // console.log(this.state.userInfo, "getMessage")
+        // params = {
+        //     "device_token": "123456",
+        //     "device_type": 1,
+        //     "user_id": this.state.userInfo.id,
+        //     "other_user_id": this.state.otherUserDetails.other_user_id,
+        //     "is_testdata": "0"
+        // }
+        // console.log(params)
+        // fetch("http://192.168.1.155/ChatDemoAPI/ChatApp.php?Service=GetMessageList", {
+        //     headers: {
+        //         "Content-Type": "application/json",
+        //     },
+        //     method: "post",
+        //     body: JSON.stringify(params)
+        // })
+        //     .then(response => response.json())
+        //     .then((responseJson) => {
+        //         console.log("response", responseJson);
+        //         if (responseJson.status == "1") {
+        //             this.setState({ messageList: responseJson.chat_list.reverse() })
+        //             setTimeout(() => {
+        //                 this.scrollToEnd(true);
+        //             }, 500);
+        //         }
 
-            })
-            .catch(error => console.log(error))
+        //     })
+        //     .catch(error => console.log(error))
     }
     sendMessage() {
-        // this.socket.emit('channel1', this.state.message);
         const dataObj = {
             conversion_id: 0,
             sender_id: this.state.userInfo.id,
-            receiver_id: this.props.navigation.state.params.ReceiverId,
+            receiver_id: this.state.otherUserDetails.other_user_id,
             message: this.state.message,
             message_type: "TEXT",
             media_name: "",
             me: 1,
             is_testdata: 0
         };
-        console.log(dataObj);
-
         this.socket.emit("SendNewMessage", dataObj);
-        let arr = this.state.messageList
-        arr.push(dataObj)
-        setTimeout(() => {
-            this.scrollToEnd(true);
-        }, 500);
+        // let arr = this.state.messageList ? this.state.messageList : []
+        // arr.push(dataObj)
+        // this.setState({ messageList: arr })
+        this.props.getConversionRequest({
+            "device_token": "123456",
+            "device_type": 1,
+            "user_id": this.state.userInfo.id,
+            "is_testdata": "1"
+        })
+        if (this.state.messageList) {
+            setTimeout(() => {
+                this.scrollToEnd(true);
+            }, 500);
+        }
         this.setState({ message: '' })
     }
     followUser() {
@@ -227,12 +257,10 @@ export default class ChatRoom extends Component {
         return (
             <SafeAreaView style={{ flex: 1, backgroundColor: Colors.BLACK, marginBottom: Platform.OS === "ios" ? Matrics.ScaleValue(this.state.padding) : 0 }}>
                 {this.renderHeader()}
-                {/* {
-                    this.state.following_status == 1 ? */}
                 <View style={{ flex: 1 }}>
                     <FlatList
                         ref={this.setRef}
-                        data={this.state.messageList}
+                        data={this.state.messageList ? this.state.messageList : []}
                         extraData={this.state}
                         keyExtractor={this._keyExtractor}
                         renderItem={this.renderMessages}
@@ -366,3 +394,12 @@ const styles = {
     }
 }
 
+const mapStateToProps = (res) => {
+    console.log("ResssSAs", res);
+    return {
+        response: res.GetDataList,
+        auth: res.Auth,
+        chat: res.Chat
+    };
+}
+export default connect(mapStateToProps, { getLoginRequest, getConversionRequest, getMessageList })(ChatRoom);

@@ -4,76 +4,84 @@ import { Colors, Images } from '../Config';
 import SocketIOClient from 'socket.io-client';
 import AsyncStorage from '@react-native-community/async-storage';
 import moment from 'moment'
+import { connect } from 'react-redux';
+import { getConversionRequest } from '../Redux/Actions'
+import { StackActions, NavigationActions } from 'react-navigation';
 
 class ChatList extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            userInfo: global.userInfo,
-            chatListUsers: [],
+            userInfo: props.auth && props.auth.data && props.auth.data.data && props.auth.data.data.User,
+            chatListUsers: props.Chat && props.Chat.data && props.Chat.data.data,
         }
         this.socket = SocketIOClient('http://192.168.1.155:3000');
         this.socket.emit('JoinSocket', { id: this.state.userInfo.id });
         global.socket = this.socket
         this.socket.on("ReceiveMessage", data => {
-            this.getConversionList()
+            this.callGetConversation()
         });
     }
 
+    componentWillMount() {
+
+    }
+    componentDidMount() {
+        this.callGetConversation()
+    }
+    componentWillReceiveProps(nextProps) {
+        this.getConversationSuccess()
+    }
+    getConversationSuccess() {
+        if (this.props.Chat.getUserRegistrationSuccess) {
+            if (this.props.Chat.data.status == 1) {
+                if (this.props.Chat && this.props.Chat.data && this.props.Chat.data.data) {
+                    console.log(this.props)
+                    this.setState({ chatListUsers: this.props.Chat.data.data })
+                }
+            }
+            else {
+                // alert(this.props.Chat.data.message)
+            }
+        }
+    }
+    callGetConversation() {
+        this.props.getConversionRequest({
+            "device_token": "123456",
+            "device_type": 1,
+            "user_id": this.state.userInfo.id,
+            "is_testdata": "1"
+        })
+    }
+    onRefresh() {
+
+    }
+    gotoChatRoom(item) {
+        console.log(item, "item")
+        this.props.navigation.navigate('ChatRoom', { onRefresh: () => this.onRefresh(), otherUserDetails: item.item })
+    }
     renderHeader() {
         return (
             <View style={{ height: 55, flexDirection: 'row', width: '100%', backgroundColor: Colors.MATEBLACK }}>
-                <View style={{ flex: 0.1 }}>
-                </View>
+                <TouchableOpacity onPress={() => {
+                    AsyncStorage.removeItem('persist:root');
+                    const resetAction = StackActions.reset({
+                        index: 0,
+                        actions: [NavigationActions.navigate({ routeName: 'Login' })],
+                    });
+                    this.props.navigation.dispatch(resetAction);
+                }} style={{ flex: 0.2, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ color: Colors.WHITE }}>LogOut</Text>
+                </TouchableOpacity>
                 <View style={{ justifyContent: 'center', alignItems: 'center', flex: 0.8 }}>
                     <Text style={{ color: Colors.WHITE, fontSize: 20 }}>Chat List</Text>
                 </View>
-                <TouchableOpacity onPress={() => { this.props.navigation.navigate('AddNewChat') }} style={{ flex: 0.1, justifyContent: 'center', alignItems: 'center' }}>
+                <TouchableOpacity onPress={() => { this.props.navigation.navigate('AddNewChat') }} style={{ flex: 0.2, justifyContent: 'center', alignItems: 'center' }}>
                     <Image style={{ height: 20, width: 20, tintColor: Colors.WHITE }} source={Images.AddButton} />
                 </TouchableOpacity>
             </View>
         )
     }
-
-    componentWillMount() {
-        // AsyncStorage.clear()
-
-    }
-    componentDidMount() {
-        this.getConversionList();
-    }
-    getConversionList() {
-        params = {
-            "device_token": "123456",
-            "device_type": 1,
-            "user_id": this.state.userInfo.id,
-            "is_testdata": "1"
-        }
-        fetch("http://192.168.1.155/ChatDemoAPI/ChatApp.php?Service=GetConversationList", {
-            headers: {
-                "Content-Type": "application/json",
-            },
-            method: "post",
-            body: JSON.stringify(params)
-        })
-            .then(response => response.json())
-            .then((responseJson) => {
-                console.log("response", responseJson);
-                if (responseJson.status == "1") {
-                    this.setState({ chatListUsers: responseJson.data })
-                }
-
-            })
-            .catch(error => console.log(error))
-    }
-    onRefresh() {
-        this.getConversionList()
-    }
-    gotoChatRoom(item) {
-        console.log(item, "item")
-        this.props.navigation.navigate('ChatRoom', { ReceiverId: item.item.other_user_id, onRefresh: () => this.onRefresh(), otherUserDetails: item.item, ReceiverName: item.item.other_user_first_name + " " + item.item.other_user_last_name, following_status: item.item.following_status })
-    }
-
     renderChatList = (item) => {
         return (
             <TouchableOpacity onPress={() => this.gotoChatRoom(item)} style={{ height: 70, width: '100%', flexDirection: 'row' }}>
@@ -109,7 +117,7 @@ class ChatList extends React.Component {
                 {this.renderHeader()}
                 <ScrollView>
                     <FlatList
-                        data={this.state.chatListUsers}
+                        data={this.props.Chat && this.props.Chat.data && this.props.Chat.data.data}
                         extraData={this.state}
                         keyExtractor={this._keyExtractor}
                         renderItem={this.renderChatList}
@@ -120,4 +128,12 @@ class ChatList extends React.Component {
         )
     }
 }
-export default ChatList
+const mapStateToProps = (res) => {
+    console.log("Ressss", res);
+    return {
+        response: res.GetDataList,
+        auth: res.Auth,
+        Chat: res.Chat
+    };
+}
+export default connect(mapStateToProps, { getConversionRequest })(ChatList);

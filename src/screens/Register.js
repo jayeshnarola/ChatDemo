@@ -3,6 +3,8 @@ import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { Colors, Images, Matrics } from '../Config';
 var FloatingLabel = require('react-native-floating-labels');
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { registrationRequest } from '../Redux/Actions'
+import { connect } from 'react-redux';
 
 
 class Register extends Component {
@@ -13,34 +15,42 @@ class Register extends Component {
         password: ''
     }
     registerUser() {
-        params = {
+        this.props.registrationRequest({
             "first_name": this.state.fname,
-            "last_name":  this.state.lname,
+            "last_name": this.state.lname,
             "email_id": this.state.email,
             "password": this.state.password,
             "device_type": "1",
             "is_testdata": "1"
-        }
-        console.log("params",params);
-        
-        fetch("http://192.168.1.155/ChatDemoAPI/ChatApp.php?Service=Register", {
-            headers: {
-                "Content-Type": "application/json",
-            },
-            method: "post",
-            body: JSON.stringify(params)
         })
-            .then(response => response.json())
-            .then((responseJson) => {
-                console.log("response", responseJson);
-                if(responseJson.status == '1'){
-                    this.props.navigation.navigate('Login')
-                }
+        // fetch("http://192.168.1.155/ChatDemoAPI/ChatApp.php?Service=Register", {
+        //     headers: {
+        //         "Content-Type": "application/json",
+        //     },
+        //     method: "post",
+        //     body: JSON.stringify(params)
+        // })
+        //     .then(response => response.json())
+        //     .then((responseJson) => {
+        //         console.log("response", responseJson);
+        //         if (responseJson.status == '1') {
+        //             this.props.navigation.navigate('Login')
+        //         }
 
-            })
-            .catch(error => console.log(error))
+        //     })
+        //     .catch(error => console.log(error))
     }
-    
+    componentWillReceiveProps(nextProps) {
+        console.log(nextProps, "Registration Response")
+        if (nextProps.auth.getUserRegistrationSuccess) {
+            if (nextProps.auth.data.status == 1) {
+                this.props.navigation.navigate('Login')
+            }
+            else {
+                alert(nextProps.auth.data.message)
+            }
+        }
+    }
     render() {
         return (
 
@@ -65,7 +75,7 @@ class Register extends Component {
                                         style={{
                                             marginTop: 5,
                                         }}
-                                        onChangeText = {(text)=> this.setState({fname:text}) }
+                                        onChangeText={(text) => this.setState({ fname: text })}
                                         value={this.state.fname}
                                         onBlur={this.onBlur}
                                     >Your First Name
@@ -85,7 +95,7 @@ class Register extends Component {
                                         style={{
                                             marginTop: 5,
                                         }}
-                                        onChangeText = {(text)=> this.setState({lname:text}) }
+                                        onChangeText={(text) => this.setState({ lname: text })}
                                         value={this.state.lname}
                                         onBlur={this.onBlur}
                                     >Your Last Name
@@ -105,7 +115,7 @@ class Register extends Component {
                                         style={{
                                             marginTop: 5,
                                         }}
-                                        onChangeText = {(text)=> this.setState({email:text}) }
+                                        onChangeText={(text) => this.setState({ email: text })}
                                         value={this.state.email}
                                         onBlur={this.onBlur}
                                     >Your Email
@@ -127,7 +137,7 @@ class Register extends Component {
                                         style={{
                                             marginTop: 5,
                                         }}
-                                        onChangeText = {(text)=> this.setState({password:text}) }
+                                        onChangeText={(text) => this.setState({ password: text })}
                                         value={this.state.password}
                                         onBlur={this.onBlur}
                                     >Enter Password
@@ -159,4 +169,10 @@ class Register extends Component {
         )
     }
 }
-export default Register
+const mapStateToProps = (res) => {
+    console.log("Ressss", res);
+    return {
+        auth: res.Auth
+    };
+}
+export default connect(mapStateToProps, { registrationRequest })(Register);

@@ -3,11 +3,17 @@ import { View, Text, SafeAreaView, Image, FlatList, ScrollView, TouchableOpacity
 import { Colors, Images, Matrics } from '../Config';
 import SocketIOClient from 'socket.io-client';
 import AsyncStorage from '@react-native-community/async-storage';
+import { getSearchUser } from '../Redux/Actions'
+import { connect } from 'react-redux';
 
 class AddNewChat extends React.Component {
-    state = {
-        userInfo: {},
-        userList: [],
+    constructor(props) {
+        super(props)
+        this.state = {
+            userInfo: props.auth && props.auth.data && props.auth.data.data && props.auth.data.data.User,
+            userList: props.Chat && props.Chat.searchUserList && props.Chat.searchUserList.data && props.Chat.searchUserList.data.user_listing,
+        }
+        console.log(props)
     }
 
     renderHeader() {
@@ -23,42 +29,47 @@ class AddNewChat extends React.Component {
         )
     }
     componentWillMount() {
-        AsyncStorage.getItem('userInfo').then(data => {
-            this.setState({ userInfo: JSON.parse(data) })
-            params = {
-                "is_testdata": "1",
-                "user_id": this.state.userInfo.id,
-                "offset": "0"
+        this.getSearchUserAPI()
+    }
+    componentWillReceiveProps(nextProps) {
+        this.searchUserListSuccess()
+
+    }
+    searchUserListSuccess() {
+        if (this.props.Chat.getSearchUserSuccess) {
+            if (this.props.Chat.data.status == 1) {
+                if (this.props.Chat && this.props.Chat.searchUserList && this.props.Chat.searchUserList.data && this.props.Chat.searchUserList.data.user_listing) {
+                    this.setState({ chatListUsers: this.props.Chat.searchUserList.data.user_listing })
+                }
             }
-            // console.log(params);
-
-            fetch("http://192.168.1.155/ChatDemoAPI/ChatApp.php?Service=SearchUsers", {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                method: "post",
-                body: JSON.stringify(params)
-            })
-
-                .then(response => response.json())
-                .then((responseJson) => {
-                    // console.log("response", responseJson);
-                    this.setState({ userList: responseJson.data.user_listing })
-                    // console.log("Userlist", this.state.userList);
-                })
-                .catch(error => console.log(error))
-        })
+            else {
+                // alert(this.props.Chat.data.message)
+            }
+        }
     }
     componentDidMount() {
         this.socket = SocketIOClient('http://192.168.1.155:3000');
     }
+    getSearchUserAPI() {
+        this.props.getSearchUser({
+            "is_testdata": "1",
+            "user_id": this.state.userInfo.id,
+            "offset": "0"
+        })
+    }
     gotoChatRoom(item) {
-        console.log(item);
-        // console.log(item.user_id);
-        this.props.navigation.navigate('ChatRoom', { ReceiverId: item.user_id, otherUserDetails: item.item, following_status: item.following_status, ReceiverName: item.firstname + " " + item.lastname })
+        let obj = {
+            conversion_id: 0,
+            following_status: item.following_status,
+            other_user_first_name: item.firstname,
+            other_user_id: item.user_id,
+            other_user_last_name: item.lastname,
+            other_user_profile_pic: item.profilepic,
+            user_id: this.state.userInfo.user_id
+        }
+        this.props.navigation.navigate('ChatRoom', { otherUserDetails: obj })
     }
     renderChat = (item) => {
-        console.log("Item", item);
         return (
             <TouchableOpacity onPress={() => this.gotoChatRoom(item.item && item.item)} style={{ height: 70, width: '100%', flexDirection: 'row' }}>
                 <View style={{ flex: 0.18, justifyContent: 'center', alignItems: 'center' }}>
@@ -78,7 +89,7 @@ class AddNewChat extends React.Component {
                 {this.renderHeader()}
                 <ScrollView>
                     <FlatList
-                        data={this.state.userList}
+                        data={this.props.Chat && this.props.Chat.searchUserList && this.props.Chat.searchUserList.data && this.props.Chat.searchUserList.data.user_listing}
                         extraData={this.state}
                         keyExtractor={this._keyExtractor}
                         renderItem={this.renderChat}
@@ -96,4 +107,13 @@ const styles = {
         height: Matrics.ScaleValue(20), width: Matrics.ScaleValue(20), tintColor: Colors.WHITE
     },
 }
-export default AddNewChat
+
+const mapStateToProps = (res) => {
+    console.log("Ressss", res);
+    return {
+        response: res.GetDataList,
+        auth: res.Auth,
+        Chat: res.Chat
+    };
+}
+export default connect(mapStateToProps, { getSearchUser })(AddNewChat);

@@ -8,39 +8,46 @@ import Profile from "./screens/Profile";
 import ChatRoom from "./screens/ChatRoom";
 import AddNewChat from "./screens/AddNewChat";
 import { Images } from "./Config";
+import SplashScreen from "./screens/SplashScreen";
 
 const TabNavigator = createBottomTabNavigator({
     ChatList: ChatList,
     Profile: Profile,
-  },
+},
 
-  {
-    defaultNavigationOptions: ({ navigation }) => ({
-      tabBarIcon: ({ focused, horizontal, tintColor }) => {
-        const { routeName } = navigation.state;
-        if (routeName === 'ChatList') {
-           return <Image style={{height:20,width:20, tintColor }} source={Images.Chat} />
-        } else if (routeName === 'Profile') {
-            return <Image style={{height:20,width:20, tintColor }} source={Images.Profile} />
-        }
-      },
-      tabBarOnPress: (scene, jumpToIndex)=>{
-          navigation.navigate(scene.navigation.state.key,{change:true});
-      }
-    }),
-    tabBarOptions: {
-        activeTintColor: 'gray',
-        inactiveTintColor: 'white',
-        showLabel:false,
-      style: {
-        backgroundColor: '#3e3e3e',
-        paddingTop:10,
-      }
+    {
+        defaultNavigationOptions: ({ navigation }) => ({
+            tabBarIcon: ({ focused, horizontal, tintColor }) => {
+                const { routeName } = navigation.state;
+                if (routeName === 'ChatList') {
+                    return <Image style={{ height: 20, width: 20, tintColor }} source={Images.Chat} />
+                } else if (routeName === 'Profile') {
+                    return <Image style={{ height: 20, width: 20, tintColor }} source={Images.Profile} />
+                }
+            },
+            tabBarOnPress: (scene, jumpToIndex) => {
+                navigation.navigate(scene.navigation.state.key, { change: true });
+            }
+        }),
+        tabBarOptions: {
+            activeTintColor: 'gray',
+            inactiveTintColor: 'white',
+            showLabel: false,
+            style: {
+                backgroundColor: '#3e3e3e',
+                paddingTop: 10,
+            }
+        },
     },
-  },
-  );
+);
 
 const AppNavigator = createStackNavigator({
+    SplashScreen: {
+        screen: SplashScreen,
+        navigationOptions: {
+            header: null
+        }
+    },
     Login: {
         screen: Login,
         navigationOptions: {
@@ -79,7 +86,7 @@ const AppNavigator = createStackNavigator({
     },
 },
     {
-        initialRouteName: 'Login'
+        initialRouteName: 'SplashScreen'
     }
 );
 
