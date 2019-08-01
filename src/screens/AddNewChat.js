@@ -55,10 +55,10 @@ class AddNewChat extends React.Component {
     gotoChatRoom(item) {
         console.log(item);
         // console.log(item.user_id);
-        this.props.navigation.navigate('ChatRoom', { ReceiverId: item.user_id, following_status : item.following_status,ReceiverName: item.firstname + " " + item.lastname  })
+        this.props.navigation.navigate('ChatRoom', { ReceiverId: item.user_id, otherUserDetails: item.item, following_status: item.following_status, ReceiverName: item.firstname + " " + item.lastname })
     }
-    renderChat= (item) =>  {
-        console.log("Item",item);  
+    renderChat = (item) => {
+        console.log("Item", item);
         return (
             <TouchableOpacity onPress={() => this.gotoChatRoom(item.item && item.item)} style={{ height: 70, width: '100%', flexDirection: 'row' }}>
                 <View style={{ flex: 0.18, justifyContent: 'center', alignItems: 'center' }}>
@@ -66,7 +66,7 @@ class AddNewChat extends React.Component {
                 </View>
                 <View style={{ flex: 0.70, justifyContent: 'center' }}>
                     <View>
-                        <Text style={{ fontWeight: 'bold', fontSize: 15, color: Colors.WHITE }}>{item.item ? item.item.firstname : ''} {item.item ? item.item.lastname:''}</Text>
+                        <Text style={{ fontWeight: 'bold', fontSize: 15, color: Colors.WHITE }}>{item.item ? item.item.firstname : ''} {item.item ? item.item.lastname : ''}</Text>
                     </View>
                 </View>
             </TouchableOpacity>

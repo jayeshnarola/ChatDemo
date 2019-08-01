@@ -13,7 +13,7 @@ class ChatList extends React.Component {
             chatListUsers: [],
         }
         this.socket = SocketIOClient('http://192.168.1.155:3000');
-        this.socket.emit('JoinSocket', { id: global.userInfo.id });
+        this.socket.emit('JoinSocket', { id: this.state.userInfo.id });
         global.socket = this.socket
         this.socket.on("ReceiveMessage", data => {
             this.getConversionList()
@@ -40,16 +40,7 @@ class ChatList extends React.Component {
 
     }
     componentDidMount() {
-        // this.socket = SocketIOClient('http://192.168.1.155:3000');
-        // AsyncStorage.getItem('userInfo').then(data => {
-
-        //     this.setState({ userInfo: JSON.parse(data) })
-
-        //     this.socket.emit('JoinSocket', { id: this.state.userInfo.id });
-
         this.getConversionList();
-
-        // })
     }
     getConversionList() {
         params = {

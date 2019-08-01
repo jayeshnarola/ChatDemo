@@ -25,16 +25,26 @@ export default class ChatRoom extends Component {
             arr['me'] = 1
             this.getMessageList()
             this.readMessage()
-            this.props.navigation.state.params.onRefresh()
+            if (this.props.navigation.state.params.onRefresh) {
+                this.props.navigation.state.params.onRefresh()
+            }
         });
 
     }
     readMessage() {
-        const readObject = { coversation_id: this.props.navigation.state.params.otherUserDetails.conversion_id, receiver_id: global.userInfo.id };
-        this.socket.emit("ReadMessage", readObject);
-        setTimeout(() => {
-            this.props.navigation.state.params.onRefresh()
-        }, 500);
+        if (this.props.navigation.state.params.otherUserDetails) {
+            const readObject = { coversation_id: this.props.navigation.state.params.otherUserDetails && this.props.navigation.state.params.otherUserDetails.conversion_id, receiver_id: global.userInfo.id };
+            this.socket.emit("ReadMessage", readObject);
+            if (this.props.navigation.state.params.onRefresh) {
+                setTimeout(() => {
+                   this.props.navigation.state.params.onRefresh()
+               }, 500);
+            }
+        }
+        else {
+            const readObject = { coversation_id: 0, receiver_id: global.userInfo.id };
+            this.socket.emit("ReadMessage", readObject);
+        }
 
     }
     componentWillMount() {
