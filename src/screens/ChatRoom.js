@@ -62,8 +62,7 @@ class ChatRoom extends Component {
     }
     componentWillUnmount() {
         this.readMessage()
-        
-        
+        this.socket.emit("disconnect")       
         Keyboard.removeListener("keyboardDidShow", this._keyboardDidShow);
     }
     callGetMessageList() {

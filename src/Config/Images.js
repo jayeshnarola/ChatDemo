@@ -8,7 +8,7 @@ const images = {
   User: require('../Assets/Images/user.png'),
   Profile: require('../Assets/Images/profile.png'),
   Chat: require('../Assets/Images/chat.png'),
-  ChatUser1: require('../Assets/Images/chatUser1.jpeg'),
+  ChatUser1: require('../Assets/Images/chatUser1.png'),
   ChatUser2: require('../Assets/Images/chatUser2.png'),
   ChatUser3: require('../Assets/Images/chatUser3.jpg'),
   ChatUser4: require('../Assets/Images/chatUser4.jpg'),

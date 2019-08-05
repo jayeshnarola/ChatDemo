@@ -7,6 +7,8 @@ import moment from 'moment'
 import { connect } from 'react-redux';
 import { getConversionRequest } from '../Redux/Actions'
 import { StackActions, NavigationActions } from 'react-navigation';
+import { PROFILE_PATH } from '../Config/Constant';
+
 
 class ChatList extends React.Component {
     constructor(props) {
@@ -77,12 +79,13 @@ class ChatList extends React.Component {
         )
     }
     renderChatList = (item) => {
+        
         return (
             <TouchableOpacity onPress={() => this.gotoChatRoom(item)} style={{ height: 70, width: '100%', flexDirection: 'row' }}>
                 <View style={{ flex: 0.18, justifyContent: 'center', alignItems: 'center' }}>
-                    <Image style={{ height: 40, width: 40, borderRadius: 25 }} source={Images.ChatUser1} />
+                    <Image style={{ height: 40, width: 40, borderRadius: 25 }} source={item.item.other_user_profile_pic ? { uri: PROFILE_PATH + item.item.other_user_profile_pic } : Images.ChatUser1} />
                 </View>
-                <View style={{ flex: 0.65, justifyContent: 'center' }}>
+                <View style={{ flex: 0.65, justifyContent: 'center', borderBottomWidth: 0.5, borderBottomColor: Colors.GRAY }}>
                     <View>
                         <Text style={{ fontWeight: 'bold', fontSize: 15, color: Colors.WHITE }}>{item.item ? item.item.other_user_first_name : ''} {item.item ? item.item.other_user_last_name : ''}</Text>
                     </View>
@@ -91,7 +94,7 @@ class ChatList extends React.Component {
                     </View>
                 </View>
 
-                <View style={{ flex: 0.17, justifyContent: 'center', alignItems: 'center' }}>
+                <View style={{ flex: 0.17, justifyContent: 'center', alignItems: 'center', borderBottomWidth: 0.5, borderBottomColor: Colors.GRAY }}>
                     <View>
                         <Text style={{ color: Colors.WHITE, color: Colors.SIMPLEGRAY, fontSize: 10 }}>{item.item ? moment.utc(item.item.created_date).fromNow() : ''}</Text>
                     </View>

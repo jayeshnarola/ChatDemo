@@ -11,6 +11,7 @@ import { Images } from "./Config";
 import SplashScreen from "./screens/SplashScreen";
 
 const TabNavigator = createBottomTabNavigator({
+    GroupChat: ChatList,
     ChatList: ChatList,
     Profile: Profile,
 },
@@ -19,7 +20,9 @@ const TabNavigator = createBottomTabNavigator({
         defaultNavigationOptions: ({ navigation }) => ({
             tabBarIcon: ({ focused, horizontal, tintColor }) => {
                 const { routeName } = navigation.state;
-                if (routeName === 'ChatList') {
+                if (routeName === 'GroupChat') {
+                    return <Image style={{ height: 20, width: 20, tintColor }} source={Images.Chat} />
+                } else if (routeName === 'ChatList') {
                     return <Image style={{ height: 20, width: 20, tintColor }} source={Images.Chat} />
                 } else if (routeName === 'Profile') {
                     return <Image style={{ height: 20, width: 20, tintColor }} source={Images.Profile} />
