@@ -10,6 +10,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 class Login extends Component {
     state = {
         email: '',
+        showPassword:false,
         password: ''
     }
     componentWillMount() {
@@ -49,11 +50,11 @@ class Login extends Component {
     }
     render() {
         return (
-            <ScrollView style={{ flex: 1, backgroundColor: Colors.MATEBLACK }}>
-                <KeyboardAwareScrollView contentContainerStyle={{ flex: 1 }} enableOnAndroid={true} enableAutomaticScroll={(Platform.OS === 'ios')} >
+            <ScrollView style={{ flex: 1, backgroundColor: Colors.MATEBLACK }}  keyboardShouldPersistTaps={'handled'}>
+                <KeyboardAwareScrollView contentContainerStyle={{ flex: 1 }} enableOnAndroid={true} enableAutomaticScroll={(Platform.OS === 'ios')} keyboardShouldPersistTaps={'handled'}>
                     <View style={{ height: 300, justifyContent: 'center', alignItems: 'center' }}>
-                        <View style={{ height: 80, width: 80, borderRadius: 40, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' }}>
-                            <Image style={{ height: 60, width: 60 }} resizeMode={'contain'} source={Images.AppLogo} />
+                        <View style={{ height: 120, width: 120, borderRadius: 60, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' }}>
+                            <Image style={{ height: 110, width: 110 }} resizeMode={'contain'} source={Images.AppLogo} />
                         </View>
                         <View style={{ height: 40, width: '100%', justifyContent: 'flex-end', alignItems: 'center' }}>
                             <Text style={{ fontSize: 25, color: Colors.WHITE, fontWeight: 'bold' }}>Login</Text>
@@ -84,7 +85,7 @@ class Login extends Component {
                                 <View style={{ width: '90%' }}>
                                     <FloatingLabel
                                         labelStyle={{ color: Colors.LABELSTYLE, fontSize: 15 }}
-                                        password={true}
+                                        password={!this.state.showPassword}
                                         inputStyle={{ borderWidth: 0 }}
                                         style={{
                                             marginTop: 5,
@@ -95,9 +96,9 @@ class Login extends Component {
                                     >Enter Password
                    </FloatingLabel>
                                 </View>
-                                <View style={{ width: '10%', alignSelf: 'flex-end', }}>
+                                <TouchableOpacity onPress={() => this.setState({ showPassword: !this.state.showPassword })} style={{ width: '10%', alignSelf: 'flex-end', }}>
                                     <Image style={{ height: 20, width: 20, tintColor: Colors.GRAY, marginBottom: Matrics.ScaleValue(10) }} source={Images.Eye} />
-                                </View>
+                                </TouchableOpacity>
                             </View>
 
                             <View style={{ height: 80, justifyContent: 'flex-end', alignItems: 'center' }}>

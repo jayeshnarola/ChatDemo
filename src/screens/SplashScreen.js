@@ -49,8 +49,13 @@ class SplashScreen extends Component {
 
     render() {
         return (
-            <View style={{ flex: 1, backgroundColor: Colors.MATEBLACK }}>
-
+            <View style={{ flex: 1, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' }}>
+                {/* <View style={{ height: 150, width: 150, borderRadius: 75, backgroundColor: Colors.WHITE, justifyContent: 'center', alignItems: 'center' }}> */}
+                    <Image style={{ height: 340, width: 340 }} resizeMode={'contain'} source={Images.AppLogo} />
+                {/* </View> */}
+                <View style={{ height: 50, marginTop: 20 }}>
+                    <Text style={{ color: Colors.WHITE, fontSize: 35, fontWeight: '600' }}>Narola Infotech</Text>
+                </View>
             </View>
         )
     }

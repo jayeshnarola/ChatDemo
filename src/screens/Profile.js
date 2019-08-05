@@ -17,24 +17,24 @@ class Profile extends React.Component {
             userInfo: props.auth && props.auth.data && props.auth.data.data && props.auth.data.data.User,
             imageName: '',
             profileImage: '',
-            lastName:'',
-            firstName:'',
-            base64String:'',
-            email:'',
-            userId:''
-        }  
+            lastName: '',
+            firstName: '',
+            base64String: '',
+            email: '',
+            userId: ''
+        }
     }
     componentWillMount() {
         let userData = this.state.userInfo
-        this.setState({ firstName: userData.firstname, lastName: userData.lastname,profileImage: PROFILE_IMAGEPATH +  userData.profilepic, email: userData.email, userId: userData.id })
+        this.setState({ firstName: userData.firstname, lastName: userData.lastname, profileImage: userData.profilepic, email: userData.email, userId: userData.id })
 
     }
-    componentWillReceiveProps(nextProps){
-        if(nextProps && nextProps.auth && nextProps.auth.data && nextProps.auth.data.data && nextProps.auth.data.data.User){
+    componentWillReceiveProps(nextProps) {
+        if (nextProps && nextProps.auth && nextProps.auth.data && nextProps.auth.data.data && nextProps.auth.data.data.User) {
             let userData = nextProps.auth.data.data.User
-            this.setState({ firstName: userData.firstname, lastName: userData.lastname,profileImage: PROFILE_IMAGEPATH +  userData.profilepic, email: userData.email, userId: userData.id, nameEditModal:false })
+            this.setState({ firstName: userData.firstname, lastName: userData.lastname, profileImage: userData.profilepic, email: userData.email, userId: userData.id, nameEditModal: false })
             console.log(this.state.profileImage);
-            
+
         }
     }
     doLogout() {
@@ -56,19 +56,19 @@ class Profile extends React.Component {
                 console.log('User tapped custom button: ', response.customButton);
             } else {
                 const source = { uri: 'data:image/jpeg;base64,' + response.data };
-                this.setState({ base64String:response.data });
+                this.setState({ base64String: response.data });
                 this.updateProfile();
             }
         });
     }
-    updateProfile(){
+    updateProfile() {
         this.props.updateProfile({
-        "user_id":this.state.userId,
-        "first_name": this.state.firstName,
-        "last_name": this.state.lastName,
-        "email_id": this.state.email,
-        "is_testdata": "1",
-        "profile_image": this.state.base64String
+            "user_id": this.state.userId,
+            "first_name": this.state.firstName,
+            "last_name": this.state.lastName,
+            "email_id": this.state.email,
+            "is_testdata": "1",
+            "profile_image": this.state.base64String
         })
     }
     renderHeader() {
@@ -78,9 +78,9 @@ class Profile extends React.Component {
             </View>
         )
     }
-    cancel(){
-        let userData =this.props.auth && this.props.auth.data && this.props.auth.data.data && this.props.auth.data.data.User
-        this.setState({ firstName: userData.firstname, lastName: userData.lastname,nameEditModal:false })
+    cancel() {
+        let userData = this.props.auth && this.props.auth.data && this.props.auth.data.data && this.props.auth.data.data.User
+        this.setState({ firstName: userData.firstname, lastName: userData.lastname, nameEditModal: false })
     }
     renderNameEditModal() {
         return (
@@ -114,7 +114,7 @@ class Profile extends React.Component {
                                 <TouchableOpacity onPress={() => this.cancel()} style={{ height: 30, width: 80, justifyContent: 'center', alignItems: 'center' }}>
                                     <Text style={{ color: Colors.MATEBLACK }}>CANCEL</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={()=>this.updateProfile()} style={{ height: 30, width: 80, justifyContent: 'center', alignItems: 'center', marginLeft: 15 }}>
+                                <TouchableOpacity onPress={() => this.updateProfile()} style={{ height: 30, width: 80, justifyContent: 'center', alignItems: 'center', marginLeft: 15 }}>
                                     <Text style={{ color: Colors.MATEBLACK }}>SAVE</Text>
                                 </TouchableOpacity>
                             </View>
@@ -130,7 +130,7 @@ class Profile extends React.Component {
             <SafeAreaView style={styles.mainView}>
                 {this.renderHeader()}
                 <View style={styles.userImageView}>
-                    <ImageBackground style={styles.imgaeBgView} imageStyle={{ borderRadius: 75, borderWidth: 3, borderColor: Colors.WHITE, }} source={this.state.profileImage ? {uri:this.state.profileImage} : Images.ChatUser2} >
+                    <ImageBackground style={styles.imgaeBgView} imageStyle={{ borderRadius: 75, borderWidth: 3, borderColor: Colors.WHITE, }} source={this.state.profileImage != null && this.state.profileImage != '' ? { uri: PROFILE_IMAGEPATH + this.state.profileImage } : Images.ChatUser1} >
                         <TouchableOpacity onPress={() => this.openCamera()} style={styles.cameraView}>
                             <Image style={styles.cameraImage} resizeMode={'contain'} source={Images.Camera}></Image>
                         </TouchableOpacity>
@@ -201,12 +201,12 @@ const styles = {
         flex: 1, alignItems: 'center', justifyContent: 'center'
     },
     logoutView1: {
-        height: 45, width: 150, backgroundColor: Colors.MATEBLACK, alignSelf: 'center', borderColor: Colors.WHITE, borderWidth: 1.5, justifyContent: 'center', alignItems: 'center'
+        height: 45, width: 150, borderRadius: 25, backgroundColor: Colors.MATEBLACK, alignSelf: 'center', borderColor: Colors.WHITE, borderWidth: 1.5, justifyContent: 'center', alignItems: 'center'
     }
 }
 
 const mapStateToProps = (res) => {
-    
+
     console.log("ResssSAs", res);
     return {
         auth: res.Auth,
