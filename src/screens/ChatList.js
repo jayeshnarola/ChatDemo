@@ -7,7 +7,7 @@ import moment from 'moment'
 import { connect } from 'react-redux';
 import { getConversionRequest } from '../Redux/Actions'
 import { StackActions, NavigationActions } from 'react-navigation';
-import { PROFILE_PATH } from '../Config/Constant';
+import { PROFILE_IMAGEPATH } from '../Config/Constant';
 
 
 class ChatList extends React.Component {
@@ -83,7 +83,7 @@ class ChatList extends React.Component {
         return (
             <TouchableOpacity onPress={() => this.gotoChatRoom(item)} style={{ height: 70, width: '100%', flexDirection: 'row' }}>
                 <View style={{ flex: 0.18, justifyContent: 'center', alignItems: 'center' }}>
-                    <Image style={{ height: 40, width: 40, borderRadius: 25 }} source={item.item.other_user_profile_pic ? { uri: PROFILE_PATH + item.item.other_user_profile_pic } : Images.ChatUser1} />
+                    <Image style={{ height: 40, width: 40, borderRadius: 25 }} source={item.item.other_user_profile_pic ? { uri: PROFILE_IMAGEPATH + item.item.other_user_profile_pic } : Images.ChatUser1} />
                 </View>
                 <View style={{ flex: 0.65, justifyContent: 'center', borderBottomWidth: 0.5, borderBottomColor: Colors.GRAY }}>
                     <View>

@@ -5,7 +5,7 @@ import SocketIOClient from 'socket.io-client';
 import AsyncStorage from '@react-native-community/async-storage';
 import { getSearchUser } from '../Redux/Actions'
 import { connect } from 'react-redux';
-import { PROFILE_PATH } from '../Config/Constant';
+import { PROFILE_IMAGEPATH } from '../Config/Constant';
 
 class AddNewChat extends React.Component {
     constructor(props) {
@@ -74,7 +74,7 @@ class AddNewChat extends React.Component {
         return (
             <TouchableOpacity onPress={() => this.gotoChatRoom(item.item && item.item)} style={{ height: 70, width: '100%', flexDirection: 'row' }}>
                 <View style={{ flex: 0.18, justifyContent: 'center', alignItems: 'center' }}>
-                    <Image style={{ height: 40, width: 40, borderRadius: 25 }} source={item.item.profilepic ? { uri: PROFILE_PATH + item.item.profilepic } : Images.ChatUser1}  />
+                    <Image style={{ height: 40, width: 40, borderRadius: 25 }} source={item.item.profilepic ? { uri: PROFILE_IMAGEPATH + item.item.profilepic } : Images.ChatUser1}  />
                 </View>
                 <View style={{ flex: 0.70, justifyContent: 'center' }}>
                     <View>
