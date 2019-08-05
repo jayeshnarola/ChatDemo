@@ -63,16 +63,9 @@ class ChatList extends React.Component {
     renderHeader() {
         return (
             <View style={{ height: 55, flexDirection: 'row', width: '100%', backgroundColor: Colors.MATEBLACK }}>
-                <TouchableOpacity onPress={() => {
-                    AsyncStorage.removeItem('persist:root');
-                    const resetAction = StackActions.reset({
-                        index: 0,
-                        actions: [NavigationActions.navigate({ routeName: 'Login' })],
-                    });
-                    this.props.navigation.dispatch(resetAction);
-                }} style={{ flex: 0.2, justifyContent: 'center', alignItems: 'center' }}>
-                    <Text style={{ color: Colors.WHITE }}>LogOut</Text>
-                </TouchableOpacity>
+                <View style={{ flex: 0.2, justifyContent: 'center', alignItems: 'center' }}>
+                    {/* <Text style={{ color: Colors.WHITE }}>LogOut</Text> */}
+                </View>
                 <View style={{ justifyContent: 'center', alignItems: 'center', flex: 0.8 }}>
                     <Text style={{ color: Colors.WHITE, fontSize: 20 }}>Chat List</Text>
                 </View>
@@ -93,7 +86,7 @@ class ChatList extends React.Component {
                         <Text style={{ fontWeight: 'bold', fontSize: 15, color: Colors.WHITE }}>{item.item ? item.item.other_user_first_name : ''} {item.item ? item.item.other_user_last_name : ''}</Text>
                     </View>
                     <View>
-                        <Text style={{ color: Colors.WHITE, marginTop: 5, color: Colors.SIMPLEGRAY, fontSize: 13 }}>{item.item ? item.item.last_message : ''}</Text>
+                        <Text numberOfLines={1} style={{ color: Colors.WHITE, marginTop: 5, color: Colors.SIMPLEGRAY, fontSize: 13 }}>{item.item ? item.item.last_message : ''}</Text>
                     </View>
                 </View>
 
@@ -123,7 +116,11 @@ class ChatList extends React.Component {
                         renderItem={this.renderChatList}
                     />
                 </ScrollView>
-
+                {/* <View style={{ height: 45, width: 45, alignSelf: 'flex-end', marginVertical: 10, marginHorizontal: 10, borderRadius: 22.5, justifyContent: 'center', alignItems: 'flex-end' }}>
+                    <TouchableOpacity onPress={() => { this.props.navigation.navigate('AddNewChat') }} style={{ height: 45, width: 45, borderColor: Colors.WHITE, borderWidth: 1, justifyContent: 'center', alignItems: 'center', borderRadius: 22.5, backgroundColor: Colors.WHITE }}>
+                        <Image style={{ height: 22, width: 22, tintColor: Colors.BLACK }} source={Images.AddButton}></Image>
+                    </TouchableOpacity>
+                </View> */}
             </SafeAreaView>
         )
     }

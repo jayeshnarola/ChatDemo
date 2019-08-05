@@ -3,7 +3,7 @@ const Colors = {
   // DARKGRAY : '#616363',
   GRAY:'gray',
   WHITE:'#FFFF',
-  // TRANSPARENT: "rgba(52, 52, 52, 0.6)",
+  TRANSPARENT: "rgba(52, 52, 52, 0.6)",
   // DARKWHITE:'#a2a5a5',
   LIGHTGRAY : '#f4f4f4',
   BLACK:'#1c1b1c',

@@ -21,14 +21,13 @@ class ChatRoom extends Component {
         }
         this.socket = global.socket
         this.socket.on("ReceiveMessage", data => {
-            this.callGetMessageList();
             this.props.getConversionRequest({
                 "device_token": "123456",
                 "device_type": 1,
                 "user_id": this.state.userInfo.id,
                 "is_testdata": "1"
             })
-            this.readMessage()
+            this.getMessageList();
             if (this.state.messageList) {
                 setTimeout(() => {
                     this.scrollToEnd(true);
@@ -54,23 +53,15 @@ class ChatRoom extends Component {
 
     }
     componentWillMount() {
-        console.log(this.props, "propsINChatRoom", this.state.otherUserDetails)
-        const { other_user_id } = this.state.otherUserDetails
-        this.setState({ messageList: this.props.chat && this.props.chat.messagesList && this.props.chat.messagesList[other_user_id] && this.props.chat.messagesList[other_user_id].chat_list.reverse() })
         this.readMessage()
-        // this.getMessageList();
-        this.callGetMessageList();
+        this.getMessageList();
     }
     componentWillReceiveProps(nextProps) {
-        console.log(nextProps,"hey")
-        const { other_user_id } = this.state.otherUserDetails
 
-        this.setState({ messageList: nextProps.chat && nextProps.chat.messagesList && nextProps.chat.messagesList[other_user_id] && nextProps.chat.messagesList[other_user_id].chat_list.reverse() })
-        
     }
     componentWillUnmount() {
         Keyboard.removeListener("keyboardDidShow", this._keyboardDidShow);
-        // this.socket.removeListener("ReceiveMessage");
+        this.readMessage()
     }
     callGetMessageList() {
         this.props.getMessageList({
@@ -134,34 +125,34 @@ class ChatRoom extends Component {
         )
     }
     getMessageList() {
-        // console.log(this.state.userInfo, "getMessage")
-        // params = {
-        //     "device_token": "123456",
-        //     "device_type": 1,
-        //     "user_id": this.state.userInfo.id,
-        //     "other_user_id": this.state.otherUserDetails.other_user_id,
-        //     "is_testdata": "0"
-        // }
-        // console.log(params)
-        // fetch("http://192.168.1.155/ChatDemoAPI/ChatApp.php?Service=GetMessageList", {
-        //     headers: {
-        //         "Content-Type": "application/json",
-        //     },
-        //     method: "post",
-        //     body: JSON.stringify(params)
-        // })
-        //     .then(response => response.json())
-        //     .then((responseJson) => {
-        //         console.log("response", responseJson);
-        //         if (responseJson.status == "1") {
-        //             this.setState({ messageList: responseJson.chat_list.reverse() })
-        //             setTimeout(() => {
-        //                 this.scrollToEnd(true);
-        //             }, 500);
-        //         }
+        console.log(this.state.userInfo, "getMessage")
+        params = {
+            "device_token": "123456",
+            "device_type": 1,
+            "user_id": this.state.userInfo.id,
+            "other_user_id": this.state.otherUserDetails.other_user_id,
+            "is_testdata": "0"
+        }
+        console.log(params)
+        fetch("http://192.168.1.155/ChatDemoAPI/ChatApp.php?Service=GetMessageList", {
+            headers: {
+                "Content-Type": "application/json",
+            },
+            method: "post",
+            body: JSON.stringify(params)
+        })
+            .then(response => response.json())
+            .then((responseJson) => {
+                console.log("response", responseJson);
+                if (responseJson.status == "1") {
+                    this.setState({ messageList: responseJson.chat_list.reverse() })
+                    setTimeout(() => {
+                        this.scrollToEnd(true);
+                    }, 500);
+                }
 
-        //     })
-        //     .catch(error => console.log(error))
+            })
+            .catch(error => console.log(error))
     }
     sendMessage() {
         const dataObj = {
@@ -184,6 +175,7 @@ class ChatRoom extends Component {
             "user_id": this.state.userInfo.id,
             "is_testdata": "1"
         })
+        this.getMessageList();
         if (this.state.messageList) {
             setTimeout(() => {
                 this.scrollToEnd(true);
