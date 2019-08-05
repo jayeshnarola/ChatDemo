@@ -54,6 +54,7 @@ class ChatList extends React.Component {
         })
     }
     onRefresh() {
+        this.callGetConversation()
 
     }
     gotoChatRoom(item) {

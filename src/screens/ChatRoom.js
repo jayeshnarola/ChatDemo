@@ -28,6 +28,7 @@ class ChatRoom extends Component {
                 "is_testdata": "1"
             })
             this.getMessageList();
+            let arr =this.state.messageList
             if (this.state.messageList) {
                 setTimeout(() => {
                     this.scrollToEnd(true);
@@ -60,8 +61,10 @@ class ChatRoom extends Component {
 
     }
     componentWillUnmount() {
-        Keyboard.removeListener("keyboardDidShow", this._keyboardDidShow);
         this.readMessage()
+        
+        
+        Keyboard.removeListener("keyboardDidShow", this._keyboardDidShow);
     }
     callGetMessageList() {
         this.props.getMessageList({
@@ -72,6 +75,7 @@ class ChatRoom extends Component {
             "is_testdata": "0"
         })
     }
+    
     componentDidMount() {
         this.keyboardDidShowListener = Keyboard.addListener("keyboardDidShow", this._keyboardDidShow);
         this.keyboardDidShowListener = Keyboard.addListener("keyboardDidChangeFrame", this._keyboardDidShow);
@@ -105,7 +109,7 @@ class ChatRoom extends Component {
     };
 
     scrollToEnd = animated => {
-        this.listRef && this.listRef.scrollToEnd({ animated });
+        // this.listRef && this.listRef.scrollToEnd({ animated });
     };
     renderHeader() {
         return (
@@ -145,7 +149,7 @@ class ChatRoom extends Component {
             .then((responseJson) => {
                 console.log("response", responseJson);
                 if (responseJson.status == "1") {
-                    this.setState({ messageList: responseJson.chat_list.reverse() })
+                    this.setState({ messageList: responseJson.chat_list})
                     setTimeout(() => {
                         this.scrollToEnd(true);
                     }, 500);
@@ -255,6 +259,7 @@ class ChatRoom extends Component {
                         data={this.state.messageList ? this.state.messageList : []}
                         extraData={this.state}
                         keyExtractor={this._keyExtractor}
+                        inverted={true}
                         renderItem={this.renderMessages}
                     />
                     <View style={styles.input}>

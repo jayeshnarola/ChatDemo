@@ -32,24 +32,24 @@ class Profile extends React.Component {
         this.props.navigation.dispatch(resetAction);
     }
     openCamera() {
-        ImagePicker.showImagePicker( (response) => {
+        ImagePicker.showImagePicker((response) => {
             console.log('Response = ', response);
 
             if (response.didCancel) {
-              console.log('User cancelled image picker');
+                console.log('User cancelled image picker');
             } else if (response.error) {
-              console.log('ImagePicker Error: ', response.error);
+                console.log('ImagePicker Error: ', response.error);
             } else if (response.customButton) {
-              console.log('User tapped custom button: ', response.customButton);
+                console.log('User tapped custom button: ', response.customButton);
             } else {
-            //   const source = { uri: response.uri };
+                //   const source = { uri: response.uri };
 
-              // You can also display the image using data:
-              const source = { uri: 'data:image/jpeg;base64,' + response.data };
+                // You can also display the image using data:
+                const source = { uri: 'data:image/jpeg;base64,' + response.data };
 
-              this.setState({profileImage: source});
+                this.setState({ profileImage: source });
             }
-          });
+        });
     }
     renderHeader() {
         return (
@@ -139,21 +139,24 @@ const styles = {
         height: 20, width: 30, tintColor: Colors.WHITE
     },
     nameView: {
-        height: 30, width: '100%', flexDirection: 'row',justifyContent:'center',alignItems:'center'
+        height: 30, width: '100%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'
     },
     nameView1: {
         flex: 1,
-        alignItems:'center',justifyContent:'center',
+        alignItems: 'center', justifyContent: 'center',
         flexDirection: 'row',
     },
     nameView2: {
-        flex: 0.65, justifyContent: 'center', alignItems: 'flex-end'
+        justifyContent: 'center', alignItems: 'flex-end'
     },
     nameText: {
         fontSize: 22, color: Colors.WHITE
     },
     pencilView: {
-        height: 25, width: 50, justifyContent: 'center', alignItems: 'center'
+        // height: 25, 
+        width: 30,
+        // backgroundColor: 'red',
+        justifyContent: 'center', alignItems: 'center'
     },
     pencilImage: {
         height: 20, width: 20, tintColor: Colors.WHITE
