@@ -4,14 +4,14 @@ import {
     GET_SEARCH_USER_SUCCESS,
     GET_SEARCH_USER_FAILED,
     GET_MESSAGES_SUCCESS,
-    GET_MESSAGES_FAILED
+    GET_MESSAGES_FAILED,
 } from '../Types/types';
 
 
 const INITIAL_STATE = {}
 
 export default (state = INITIAL_STATE, action) => {
-    console.log(action, "ActionsinReducer", state)
+    // console.log(action, "ActionsinReducer", state)
     let userId;
     if (action.other_user_id) {
         userId = action.other_user_id
@@ -36,11 +36,11 @@ export default (state = INITIAL_STATE, action) => {
                 let obj = {}
                 if (obj && state.messagesList && action.payload) {
                     obj = state.messagesList
-                    console.log(obj, "obj1", action.payload)
+                    // console.log(obj, "obj1", action.payload)
                     obj[action.payload.other_user_id] = action.payload
                 }
                 else {
-                    console.log(obj, "obj")
+                    // console.log(obj, "obj")
                     obj[action.payload.other_user_id] = action.payload
                 }
                 return { ...state, getMessageSuccess: true, messagesList: obj }
@@ -49,7 +49,7 @@ export default (state = INITIAL_STATE, action) => {
         case GET_MESSAGES_FAILED:
             return { ...state, getMessageSuccess: false, messageData: action.payload }
 
-
+        
         default:
             return state;
     }

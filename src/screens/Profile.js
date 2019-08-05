@@ -5,23 +5,35 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import AsyncStorage from '@react-native-community/async-storage';
 import { StackActions, NavigationActions } from 'react-navigation';
 import ImagePicker from 'react-native-image-picker';
+import { updateProfile } from '../Redux/Actions'
 import { connect } from 'react-redux';
+import { PROFILE_IMAGEPATH } from '../Config/Constant';
 
 class Profile extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             nameEditModal: false,
-            userName: 'TEMP',
             userInfo: props.auth && props.auth.data && props.auth.data.data && props.auth.data.data.User,
             imageName: '',
-            profileImage: ''
-        }
+            profileImage: '',
+            lastName:'',
+            firstName:'',
+            base64String:'',
+            email:'',
+            userId:''
+        }  
     }
     componentWillMount() {
         let userData = this.state.userInfo
-        this.setState({ userName: userData.firstname + " " + userData.lastname })
+        this.setState({ firstName: userData.firstname, lastName: userData.lastname,profileImage: PROFILE_IMAGEPATH +  userData.profilepic, email: userData.email, userId: userData.id })
 
+    }
+    async componentWillReceiveProps(nextProps){
+        if(nextProps && nextProps.auth && nextProps.auth.data && nextProps.auth.data.data && nextProps.auth.data.data.User){
+            let userData = nextProps.auth.data.data.User
+            this.setState({ firstName: userData.firstname, lastName: userData.lastname,profileImage: PROFILE_IMAGEPATH +  userData.profilepic, email: userData.email, userId: userData.id, nameEditModal:false })
+        }
     }
     doLogout() {
         AsyncStorage.removeItem('persist:root');
@@ -33,8 +45,7 @@ class Profile extends React.Component {
     }
     openCamera() {
         ImagePicker.showImagePicker((response) => {
-            console.log('Response = ', response);
-
+            // console.log('Response = ', response);
             if (response.didCancel) {
                 console.log('User cancelled image picker');
             } else if (response.error) {
@@ -42,14 +53,21 @@ class Profile extends React.Component {
             } else if (response.customButton) {
                 console.log('User tapped custom button: ', response.customButton);
             } else {
-                //   const source = { uri: response.uri };
-
-                // You can also display the image using data:
                 const source = { uri: 'data:image/jpeg;base64,' + response.data };
-
-                this.setState({ profileImage: source });
+                this.setState({ base64String:response.data });
+                this.updateProfile();
             }
         });
+    }
+    updateProfile(){
+        this.props.updateProfile({
+        "user_id":this.state.userId,
+        "first_name": this.state.firstName,
+        "last_name": this.state.lastName,
+        "email_id": this.state.email,
+        "is_testdata": "1",
+        "profile_image": this.state.base64String
+        })
     }
     renderHeader() {
         return (
@@ -58,28 +76,43 @@ class Profile extends React.Component {
             </View>
         )
     }
+    cancel(){
+        let userData =this.props.auth && this.props.auth.data && this.props.auth.data.data && this.props.auth.data.data.User
+        this.setState({ firstName: userData.firstname, lastName: userData.lastname,nameEditModal:false })
+    }
     renderNameEditModal() {
         return (
             <Modal visible={this.state.nameEditModal} transparent={true} animationType="fade" onRequestClose={() => this.setState({ nameEditModal: false })} >
                 <KeyboardAwareScrollView contentContainerStyle={{ flex: 1 }}>
                     <View style={{ flex: 1, backgroundColor: Colors.TRANSPARENT, justifyContent: 'flex-end' }}>
-                        <View style={{ height: 160, backgroundColor: Colors.WHITE, borderTopStartRadius: 8, borderTopRightRadius: 8, }}>
+                        <View style={{ height: 240, backgroundColor: Colors.WHITE, borderTopStartRadius: 8, borderTopRightRadius: 8, }}>
                             <View style={{ height: 20, marginTop: 20 }}>
-                                <Text style={{ paddingLeft: 20 }}>Enter your name</Text>
+                                <Text style={{ paddingLeft: 20 }}>Enter your first name</Text>
                             </View>
                             <View contentContainerStyle={{ height: 40, width: '90%', alignSelf: 'center', alignItems: 'center' }}>
                                 <TextInput
-                                    style={{ height: 40, width: '90%', alignSelf: 'center', borderBottomColor: Colors.MATEBLACK, borderBottomWidth: 1 }}
-                                    onChangeText={(text) => this.setState({ userName: text })}
+                                    style={{ height: 40, width: '90%', alignSelf: 'center', borderBottomColor: Colors.GRAY, borderBottomWidth: 1 }}
+                                    onChangeText={(text) => this.setState({ firstName: text })}
                                     autoFocus={true}
-                                    value={this.state.userName}
+                                    value={this.state.firstName}
+                                />
+                            </View>
+                            <View style={{ height: 20, marginTop: 20 }}>
+                                <Text style={{ paddingLeft: 20 }}>Enter your last name</Text>
+                            </View>
+                            <View contentContainerStyle={{ height: 40, width: '90%', alignSelf: 'center', alignItems: 'center' }}>
+                                <TextInput
+                                    style={{ height: 40, width: '90%', alignSelf: 'center', borderBottomColor: Colors.GRAY, borderBottomWidth: 1 }}
+                                    onChangeText={(text) => this.setState({ lastName: text })}
+                                    autoFocus={true}
+                                    value={this.state.lastName}
                                 />
                             </View>
                             <View style={{ height: 45, width: '90%', alignSelf: 'center', marginTop: 20, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
-                                <TouchableOpacity onPress={() => { this.setState({ nameEditModal: false }) }} style={{ height: 30, width: 80, justifyContent: 'center', alignItems: 'center' }}>
+                                <TouchableOpacity onPress={() => this.cancel()} style={{ height: 30, width: 80, justifyContent: 'center', alignItems: 'center' }}>
                                     <Text style={{ color: Colors.MATEBLACK }}>CANCEL</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={{ height: 30, width: 80, justifyContent: 'center', alignItems: 'center', marginLeft: 15 }}>
+                                <TouchableOpacity onPress={()=>this.updateProfile()} style={{ height: 30, width: 80, justifyContent: 'center', alignItems: 'center', marginLeft: 15 }}>
                                     <Text style={{ color: Colors.MATEBLACK }}>SAVE</Text>
                                 </TouchableOpacity>
                             </View>
@@ -90,11 +123,12 @@ class Profile extends React.Component {
         )
     }
     render() {
+
         return (
             <SafeAreaView style={styles.mainView}>
                 {this.renderHeader()}
                 <View style={styles.userImageView}>
-                    <ImageBackground style={styles.imgaeBgView} imageStyle={{ borderRadius: 75, borderWidth: 3, borderColor: Colors.WHITE, }} source={this.state.profileImage ? this.state.profileImage : Images.ChatUser2} >
+                    <ImageBackground style={styles.imgaeBgView} imageStyle={{ borderRadius: 75, borderWidth: 3, borderColor: Colors.WHITE, }} source={this.state.profileImage ? {uri:this.state.profileImage} : Images.ChatUser2} >
                         <TouchableOpacity onPress={() => this.openCamera()} style={styles.cameraView}>
                             <Image style={styles.cameraImage} resizeMode={'contain'} source={Images.Camera}></Image>
                         </TouchableOpacity>
@@ -103,7 +137,7 @@ class Profile extends React.Component {
                 <View style={styles.nameView}>
                     <View style={styles.nameView1}>
                         <View style={styles.nameView2}>
-                            <Text style={styles.nameText}>{this.state.userName}</Text>
+                            <Text style={styles.nameText}>{this.state.firstName + ' ' + this.state.lastName}</Text>
                         </View>
                         <View style={{ justifyContent: 'center' }}>
                             <TouchableOpacity onPress={() => this.setState({ nameEditModal: true })} style={styles.pencilView}>
@@ -170,9 +204,11 @@ const styles = {
 }
 
 const mapStateToProps = (res) => {
+    
     console.log("ResssSAs", res);
     return {
-        auth: res.Auth
+        auth: res.Auth,
+        // updatedData : res.Chat.updateProfile
     };
 }
-export default connect(mapStateToProps, null)(Profile);
+export default connect(mapStateToProps, { updateProfile })(Profile);

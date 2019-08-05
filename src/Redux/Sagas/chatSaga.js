@@ -10,7 +10,10 @@ import {
     GET_SEARCH_USER_REQUEST,
     GET_MESSAGES_REQUEST,
     GET_MESSAGES_SUCCESS,
-    GET_MESSAGES_FAILED
+    GET_MESSAGES_FAILED,
+    UPDATE_PROFILE_REQUEST,
+    UPDATE_PROFILE_SUCCESS,
+    UPDATE_PROFILE_FAILED
 } from '../Types/types';
 
 export const getconversionSaga = function* getconversionSaga({ params }) {
@@ -49,6 +52,7 @@ export const getMessages = function* getMessages({ params }) {
         yield put({ type: GET_MESSAGES_FAILED, payload: e });
     }
 }
+
 
 export function* chatSaga() {
     yield takeEvery(GET_CHATLIST_REQUEST, getconversionSaga);

@@ -5,14 +5,16 @@ var FloatingLabel = require('react-native-floating-labels');
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { registrationRequest } from '../Redux/Actions'
 import { connect } from 'react-redux';
-
+import ImagePicker from 'react-native-image-picker';
 
 class Register extends Component {
     state = {
         fname: '',
         lname: '',
         email: '',
-        password: ''
+        password: '',
+        base64String:'',
+        imageName:''
     }
     registerUser() {
         this.props.registrationRequest({
@@ -21,8 +23,10 @@ class Register extends Component {
             "email_id": this.state.email,
             "password": this.state.password,
             "device_type": "1",
-            "is_testdata": "1"
+            "is_testdata": "1",
+            "profile_image": this.state.base64String
         })
+        
         // fetch("http://192.168.1.155/ChatDemoAPI/ChatApp.php?Service=Register", {
         //     headers: {
         //         "Content-Type": "application/json",
@@ -51,6 +55,23 @@ class Register extends Component {
             }
         }
     }
+    openGallary(){
+        ImagePicker.showImagePicker((response) => {
+            console.log('Response = ', response);
+
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
+            } else {
+                const source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+                this.setState({ profileImage: source, base64String:response.data, imageName:response.fileName });
+            }
+        });
+    }
     render() {
         return (
 
@@ -64,7 +85,7 @@ class Register extends Component {
                         <Text style={{ fontSize: 25, color: Colors.WHITE, fontWeight: 'bold' }}>Sign Up</Text>
                     </View>
                 </View>
-                <View style={{ height:360,backgroundColor:'red',marginTop:15, backgroundColor: Colors.MATEBLACK, }}>
+                <View style={{ height:370,backgroundColor:'red', backgroundColor: Colors.MATEBLACK, }}>
                     <View style={{ height:'100%', width: '93%', borderRadius: 25, alignSelf: 'center', backgroundColor: Colors.WHITE, shadowRadius: 15, shadowOffset: { width: 0, height: 0, }, shadowColor: Colors.BLACK, shadowOpacity: 1.0, }}>
                         <View style={{ width: '90%', flexDirection: 'row', borderBottomWidth: 0.5, borderColor: Colors.SIMPLEGRAY, alignSelf: 'center' }}>
 
@@ -148,7 +169,15 @@ class Register extends Component {
                                 <Image style={{ height: 20, width: 20, tintColor: Colors.GRAY, marginBottom: Matrics.ScaleValue(10) }} source={Images.Eye} />
                             </View>
                         </View>
-                        <View style={{ height: 80, justifyContent: 'flex-end', alignItems: 'center' }}>
+                        <View style={{flexDirection:'row'}}>
+                            <TouchableOpacity onPress={()=>this.openGallary()} style={{backgroundColor:'gray',width:'38%',borderRadius:12.5,backgroundColor:Colors.GRAY, justifyContent:'center',alignItems:'center', height:25,marginHorizontal:25,marginTop:10}}>
+                                    <Text style={{fontSize:12,color:Colors.WHITE}}>Choose your photo</Text>
+                            </TouchableOpacity>
+                            <View style={{justifyContent:'center',marginBottom:0}}>
+                                <Text style={{marginTop:10}}>{this.state.imageName}</Text>
+                            </View>
+                        </View>
+                        <View style={{ height: 80, justifyContent: 'center', alignItems: 'center' }}>
                             <TouchableOpacity onPress={() => this.registerUser()} style={{ height: 45, width: 320, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', borderRadius: 22.5, backgroundColor: Colors.MATEBLACK }}>
                                 <Text style={{ color: Colors.WHITE, fontWeight: '500' }}>Sign Up</Text>
                                 <Image style={{ height: 10, width: 20, marginLeft: 10, tintColor: Colors.WHITE }} source={Images.RightArrow} />

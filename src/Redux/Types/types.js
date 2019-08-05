@@ -21,3 +21,8 @@ export const GET_SEARCH_USER_FAILED = 'get_search_user_failed';
 export const GET_MESSAGES_REQUEST = 'get_message_request';
 export const GET_MESSAGES_SUCCESS = 'get_message_success';
 export const GET_MESSAGES_FAILED = 'get_message_failed';
+
+export const UPDATE_PROFILE_REQUEST = 'update_profile_request';
+export const UPDATE_PROFILE_SUCCESS = 'update_profile_success';
+export const UPDATE_PROFILE_FAILED = 'update_profile_failed';
+
