@@ -29,10 +29,12 @@ class Profile extends React.Component {
         this.setState({ firstName: userData.firstname, lastName: userData.lastname,profileImage: PROFILE_IMAGEPATH +  userData.profilepic, email: userData.email, userId: userData.id })
 
     }
-    async componentWillReceiveProps(nextProps){
+    componentWillReceiveProps(nextProps){
         if(nextProps && nextProps.auth && nextProps.auth.data && nextProps.auth.data.data && nextProps.auth.data.data.User){
             let userData = nextProps.auth.data.data.User
             this.setState({ firstName: userData.firstname, lastName: userData.lastname,profileImage: PROFILE_IMAGEPATH +  userData.profilepic, email: userData.email, userId: userData.id, nameEditModal:false })
+            console.log(this.state.profileImage);
+            
         }
     }
     doLogout() {
