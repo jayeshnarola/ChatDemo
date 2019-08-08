@@ -13,7 +13,8 @@ import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
 import com.BV.LinearGradient.LinearGradientPackage;
 import java.util.List;
-
+import org.reactnative.camera.RNCameraPackage; 
+import io.invertase.firebase.RNFirebasePackage;
 public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
@@ -29,6 +30,8 @@ public class MainApplication extends Application implements ReactApplication {
       // Packages that cannot be autolinked yet can be added manually here, for example:
       // packages.add(new MyReactNativePackage());
       new LinearGradientPackage();
+      new RNFirebasePackage();
+      new RNCameraPackage();
       return packages;
     }
 

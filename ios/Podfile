@@ -33,6 +33,8 @@ target 'chatdemo' do
 
   pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
 
+  pod 'RNFirebase', :path => '../node_modules/react-native-firebase'
+
   target 'chatdemoTests' do
     inherit! :search_paths
     # Pods for testing

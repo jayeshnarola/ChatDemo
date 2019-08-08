@@ -9,9 +9,11 @@ import ChatRoom from "./screens/ChatRoom";
 import AddNewChat from "./screens/AddNewChat";
 import { Images } from "./Config";
 import SplashScreen from "./screens/SplashScreen";
+import Scanner from "./screens/Scanner";
+import ImageGallery from "./screens/ImageGallery";
 
 const TabNavigator = createBottomTabNavigator({
-    GroupChat: ChatList,
+    Scanner: Scanner,
     ChatList: ChatList,
     Profile: Profile,
 },
@@ -21,11 +23,11 @@ const TabNavigator = createBottomTabNavigator({
             tabBarIcon: ({ focused, horizontal, tintColor }) => {
                 const { routeName } = navigation.state;
                 if (routeName === 'GroupChat') {
-                    return <Image style={{ height: 20, width: 20, tintColor }} source={Images.Chat} />
+                    return <Image style={{ height: 30, width: 30, tintColor }} source={Images.Camera1} />
                 } else if (routeName === 'ChatList') {
-                    return <Image style={{ height: 20, width: 20, tintColor }} source={Images.Chat} />
+                    return <Image style={{ height: 25, width: 25, tintColor }} source={Images.Chat} />
                 } else if (routeName === 'Profile') {
-                    return <Image style={{ height: 20, width: 20, tintColor }} source={Images.Profile} />
+                    return <Image style={{ height: 25, width: 25, tintColor }} source={Images.Profile} />
                 }
             },
             tabBarOnPress: (scene, jumpToIndex) => {
@@ -69,12 +71,6 @@ const AppNavigator = createStackNavigator({
             header: null
         }
     },
-    Profile: {
-        screen: TabNavigator,
-        navigationOptions: {
-            header: null
-        }
-    },
     ChatRoom: {
         screen: ChatRoom,
         navigationOptions: {
@@ -87,9 +83,22 @@ const AppNavigator = createStackNavigator({
             header: null
         }
     },
+    Scanner: {
+        screen: Scanner,
+        navigationOptions: {
+            header: null
+        }
+    },
+    ImageGallery: {
+        screen: ImageGallery,
+        navigationOptions: {
+            header: null
+        }
+    },
+    
 },
     {
-        initialRouteName: 'SplashScreen'
+        initialRouteName: 'Scanner'
     }
 );
 
