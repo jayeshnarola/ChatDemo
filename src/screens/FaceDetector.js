@@ -176,13 +176,17 @@ export default class FaceDetection extends React.Component {
               top: position.y - landmarkSize / 2,
             },
           ]}
-        />
+        >          
+        </View>
       );
     return (
       <View key={`landmarks-${face.faceID}`}>
-        {renderLandmark(face.leftEyePosition)}
         {renderLandmark(face.rightEyePosition)}
-        {/* {renderLandmark(face.leftEarPosition)}
+        {renderLandmark(face.leftEyePosition)}
+
+        {/* {renderLandmark(face.leftEyePosition)}
+        {renderLandmark(face.rightEyePosition)}
+        {renderLandmark(face.leftEarPosition)}
         {renderLandmark(face.rightEarPosition)}
         {renderLandmark(face.leftCheekPosition)}
         {renderLandmark(face.rightCheekPosition)}
@@ -262,8 +266,8 @@ export default class FaceDetection extends React.Component {
               this.camera.takePictureAsync().then(data => {
                 let rightOffset = 0
 
-                let dx = 1800 
-                let dy = 4000 
+                let dx = 1800
+                let dy = 4000
                 let x = (this.state.faces[0].bounds.origin.x * 1800) / 145
                 let y = (this.state.faces[0].bounds.origin.y * 4000) / 400
 

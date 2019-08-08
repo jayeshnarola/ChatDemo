@@ -23,6 +23,10 @@ const images = {
   PencilButton: require('../Assets/Images/edit.png'),
   Camera: require('../Assets/Images/camera.png'),
   Camera1: require('../Assets/Images/camera1.png'),
+
+  //filters
+  HairEffect: require('../Assets/Images/hairEffect.png'),
+  
 };
 
 export default images;
