@@ -5,12 +5,13 @@ import firebase from 'react-native-firebase';
 import { Colors, Images } from '../Config';
 import Voice from 'react-native-voice';
 import Questions from './questions.json'
+import Tts from 'react-native-tts';
 export default class VoiceRecognize extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             isRecording: false,
-            language: 'en'
+            language: 'hi'
         };
         Voice.onSpeechStart = this.onSpeechStart;
         Voice.onSpeechRecognized = this.onSpeechRecognized;
@@ -20,6 +21,7 @@ export default class VoiceRecognize extends React.Component {
         Voice.onSpeechPartialResults = this.onSpeechPartialResults;
         Voice.onSpeechVolumeChanged = this.onSpeechVolumeChanged;
         console.log(Questions, "Questions")
+        Tts.setDefaultLanguage(this.state.language);
 
     }
     componentWillUnmount() {
@@ -74,19 +76,40 @@ export default class VoiceRecognize extends React.Component {
                 this.setState({
                     ansResult: arr
                 })
+                if (this.state.ansResult != undefined && this.state.ansResult != [] && this.state.ansResult.length > 0) {
+                    Tts.speak(this.state.ansResult[0].a);
+                }
             }, 1000);
         }
         else {
-            setTimeout(() => {
-                this.setState({
-                    ansResult: [{
-                        "q": "कैसे हो?",
-                        "a": "कोई परिणाम नहीं मिला"
-                    }]
-                })
-            }, 1000);
-        }
+            if (this.state.language == 'hi') {
 
+                setTimeout(() => {
+                    this.setState({
+                        ansResult: [{
+                            "q": "कैसे हो?",
+                            "a": "कोई परिणाम नहीं मिला"
+                        }]
+                    })
+                    if (this.state.ansResult != undefined && this.state.ansResult != [] && this.state.ansResult.length > 0) {
+                        Tts.speak(this.state.ansResult[0].a);
+                    }
+                }, 1000);
+            }
+            else {
+                setTimeout(() => {
+                    this.setState({
+                        ansResult: [{
+                            "q": "कैसे हो?",
+                            "a": "No Result Found"
+                        }]
+                    })
+                    if (this.state.ansResult != undefined && this.state.ansResult != [] && this.state.ansResult.length > 0) {
+                        Tts.speak(this.state.ansResult[0].a);
+                    }
+                }, 1000);
+            }
+        }
     };
 
     onSpeechPartialResults = e => {
@@ -141,13 +164,13 @@ export default class VoiceRecognize extends React.Component {
                         <TouchableOpacity onPress={() => this.setState({ language: 'hi' })} style={[{ padding: 10, margin: 5, borderColor: 'white', borderWidth: 2 }, this.state.language == 'hi' ? { backgroundColor: 'white' } : {}]}><Text style={[{ color: 'white' }, this.state.language == 'hi' ? { color: 'black' } : {}]}>हिंदी</Text></TouchableOpacity>
                         <TouchableOpacity onPress={() => this.setState({ language: 'en' })} style={[{ padding: 10, margin: 5, borderColor: 'white', borderWidth: 2 }, this.state.language == 'en' ? { backgroundColor: 'white' } : {}]}><Text style={[{ color: 'white' }, this.state.language == 'en' ? { color: 'black' } : {}]}>ENGLISH</Text></TouchableOpacity>
                     </View>
-                    <View style={{ flex: 0.3,justifyContent:'center',alignItems:'center' }}>
+                    <View style={{ flex: 0.3, justifyContent: 'center', alignItems: 'center' }}>
                         {this.state.isRecording ?
                             <TouchableOpacity onPress={() => this.onStop()} style={{ backgroundColor: 'red', borderColor: 'white', borderWidth: 3, borderRadius: 30, height: 50, width: 50 }}>
 
                             </TouchableOpacity>
                             :
-                            <TouchableOpacity onPress={() => this.onPlay()} style={{  backgroundColor: 'black', borderColor: 'white', borderWidth: 3, borderRadius: 30, padding: 10 }}>
+                            <TouchableOpacity onPress={() => this.onPlay()} style={{ backgroundColor: 'black', borderColor: 'white', borderWidth: 3, borderRadius: 30, padding: 10 }}>
                                 <Image source={Images.Mic} style={{ height: 25, width: 25, tintColor: 'white' }}></Image>
                             </TouchableOpacity>
                         }

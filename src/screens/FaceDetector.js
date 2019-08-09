@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Transforms, ImageEditor, Dimensions, Text, Image, View, TouchableOpacity, Slider } from 'react-native';
-import { RNCamera } from 'react-native-camera';
+import { RNCamera, FaceDetector } from 'react-native-camera';
 import firebase from 'react-native-firebase';
 import { Images } from '../Config';
 const { width, height } = Dimensions.get('window');
@@ -176,7 +176,7 @@ export default class FaceDetection extends React.Component {
               top: position.y - landmarkSize / 2,
             },
           ]}
-        >          
+        >
         </View>
       );
     return (

@@ -37,6 +37,8 @@ target 'chatdemo' do
 
   pod 'react-native-voice', :path => '../node_modules/react-native-voice'
 
+  pod 'TextToSpeech', :path => '../node_modules/react-native-tts'
+
   target 'chatdemoTests' do
     inherit! :search_paths
     # Pods for testing
