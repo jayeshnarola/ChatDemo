@@ -26,6 +26,7 @@ const images = {
 
   //filters
   HairEffect: require('../Assets/Images/hairEffect.png'),
+  Mic: require('../Assets/Images/mic.png'),
   
 };
 

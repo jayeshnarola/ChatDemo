@@ -33,7 +33,9 @@ target 'chatdemo' do
 
   pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
 
-  pod 'RNFirebase', :path => '../node_modules/react-native-firebase'
+  
+
+  pod 'react-native-voice', :path => '../node_modules/react-native-voice'
 
   target 'chatdemoTests' do
     inherit! :search_paths

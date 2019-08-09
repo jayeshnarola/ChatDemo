@@ -8,13 +8,14 @@ import BarcodeMask from 'react-native-barcode-mask';
 import FaceDetection from './FaceDetector';
 import Camera from './Camera';
 import TextDetection from './TextDetection';
+import VoiceRecognize from './VoiceRecognize';
 
 class Scanner extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             userInfo: props.auth && props.auth.data && props.auth.data.data && props.auth.data.data.User,
-            selectedTab: 0
+            selectedTab: 4
         }
     }
     componentWillMount() {
@@ -27,6 +28,9 @@ class Scanner extends React.Component {
         return (
             <View style={{ backgroundColor: Colors.MATEBLACK, flexDirection: 'row', alignItems: 'center', height: 55 }}>
                 <ScrollView showsHorizontalScrollIndicator={false} style={{ flexDirection: 'row' }} horizontal={true}>
+                    <TouchableOpacity onPress={() => this.setState({ selectedTab: 4 })} style={[styles.tabStyle, this.state.selectedTab == 4 ? styles.activeTabStyle : { borderBottomColor: Colors.MATEBLACK }]}>
+                        <Text style={[styles.tabTextStyle, this.state.selectedTab == 4 ? { color: Colors.WHITE } : { color: Colors.GRAY }]}>Voice Recognize</Text>
+                    </TouchableOpacity>
                     <TouchableOpacity onPress={() => this.setState({ selectedTab: 0 })} style={[styles.tabStyle, this.state.selectedTab == 0 ? styles.activeTabStyle : { borderBottomColor: Colors.MATEBLACK }]}>
                         <Text style={[styles.tabTextStyle, this.state.selectedTab == 0 ? { color: Colors.WHITE } : { color: Colors.GRAY }]}>Camera</Text>
                     </TouchableOpacity>
@@ -82,6 +86,7 @@ class Scanner extends React.Component {
                 }
                 {this.state.selectedTab == 2 && <FaceDetection navigation={this.props.navigation} />}
                 {this.state.selectedTab == 3 && <TextDetection navigation={this.props.navigation} />}
+                {this.state.selectedTab == 4 && <VoiceRecognize navigation={this.props.navigation} />}
             </SafeAreaView>
         )
     }
