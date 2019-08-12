@@ -15,11 +15,11 @@ class Scanner extends React.Component {
         super(props);
         this.state = {
             userInfo: props.auth && props.auth.data && props.auth.data.data && props.auth.data.data.User,
-            selectedTab: 4
+            selectedTab: 5
         }
     }
     componentWillMount() {
-
+      
     }
     componentWillReceiveProps(nextProps) {
 
@@ -28,8 +28,8 @@ class Scanner extends React.Component {
         return (
             <View style={{ backgroundColor: Colors.MATEBLACK, flexDirection: 'row', alignItems: 'center', height: 55 }}>
                 <ScrollView showsHorizontalScrollIndicator={false} style={{ flexDirection: 'row' }} horizontal={true}>
-                    <TouchableOpacity onPress={() => this.setState({ selectedTab: 4 })} style={[styles.tabStyle, this.state.selectedTab == 4 ? styles.activeTabStyle : { borderBottomColor: Colors.MATEBLACK }]}>
-                        <Text style={[styles.tabTextStyle, this.state.selectedTab == 4 ? { color: Colors.WHITE } : { color: Colors.GRAY }]}>Voice Recognize</Text>
+                    <TouchableOpacity onPress={() => this.setState({ selectedTab: 5 })} style={[styles.tabStyle, this.state.selectedTab == 5 ? styles.activeTabStyle : { borderBottomColor: Colors.MATEBLACK }]}>
+                        <Text style={[styles.tabTextStyle, this.state.selectedTab == 5 ? { color: Colors.WHITE } : { color: Colors.GRAY }]}>TEST</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => this.setState({ selectedTab: 0 })} style={[styles.tabStyle, this.state.selectedTab == 0 ? styles.activeTabStyle : { borderBottomColor: Colors.MATEBLACK }]}>
                         <Text style={[styles.tabTextStyle, this.state.selectedTab == 0 ? { color: Colors.WHITE } : { color: Colors.GRAY }]}>Camera</Text>
@@ -43,7 +43,18 @@ class Scanner extends React.Component {
                     <TouchableOpacity onPress={() => this.setState({ selectedTab: 3 })} style={[styles.tabStyle, this.state.selectedTab == 3 ? styles.activeTabStyle : { borderBottomColor: Colors.MATEBLACK }]}>
                         <Text style={[styles.tabTextStyle, this.state.selectedTab == 3 ? { color: Colors.WHITE } : { color: Colors.GRAY }]}>Text Recognize</Text>
                     </TouchableOpacity>
+                    <TouchableOpacity onPress={() => this.setState({ selectedTab: 4 })} style={[styles.tabStyle, this.state.selectedTab == 4 ? styles.activeTabStyle : { borderBottomColor: Colors.MATEBLACK }]}>
+                        <Text style={[styles.tabTextStyle, this.state.selectedTab == 4 ? { color: Colors.WHITE } : { color: Colors.GRAY }]}>Voice Recognize</Text>
+                    </TouchableOpacity>
                 </ScrollView>
+            </View>
+        )
+    }
+    renderFaceDetection()
+    {
+        return(
+            <View>
+                <Text>Hello</Text>
             </View>
         )
     }
@@ -87,6 +98,7 @@ class Scanner extends React.Component {
                 {this.state.selectedTab == 2 && <FaceDetection navigation={this.props.navigation} />}
                 {this.state.selectedTab == 3 && <TextDetection navigation={this.props.navigation} />}
                 {this.state.selectedTab == 4 && <VoiceRecognize navigation={this.props.navigation} />}
+                {this.state.selectedTab == 5 && this.renderFaceDetection()}
             </SafeAreaView>
         )
     }
